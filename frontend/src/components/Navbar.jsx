@@ -1,13 +1,13 @@
 import React from 'react';
-import { Car, ShieldCheck, UserCheck, LogOut, Search, Bell } from 'lucide-react';
+import { Car, UserCheck, LogOut } from 'lucide-react';
 
 export default function Navbar({ currentUser, onSwitchUser, onLogout }) {
   const demoUsers = [
-    { label: 'Admin', email: 'admin@automotoralascondes.cl', role: 'ADMIN', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
-    { label: 'Gerente', email: 'gerente@automotoralascondes.cl', role: 'GERENTE', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
-    { label: 'Vendedor 1', email: 'vendedor1@automotoralascondes.cl', role: 'VENDEDOR', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-    { label: 'F&I Asesor', email: 'fi@automotoralascondes.cl', role: 'F_AND_I', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
-    { label: 'BDC Recepción', email: 'bdc@automotoralascondes.cl', role: 'BDC', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
+    { label: 'Admin', email: 'admin@origen.cl', role: 'ADMIN', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
+    { label: 'Gerente', email: 'gerente@origen.cl', role: 'GERENTE', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
+    { label: 'Vendedor 1', email: 'vendedor1@origen.cl', role: 'VENDEDOR', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+    { label: 'F&I Asesor', email: 'fi@origen.cl', role: 'F_AND_I', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
+    { label: 'BDC Recepción', email: 'bdc@origen.cl', role: 'BDC', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
   ];
 
   return (
@@ -21,10 +21,10 @@ export default function Navbar({ currentUser, onSwitchUser, onLogout }) {
           <div className="flex items-center gap-2">
             <h1 className="font-extrabold text-lg text-white tracking-tight">Automotora ERP</h1>
             <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/30">
-              Las Condes
+              Origen SpA
             </span>
           </div>
-          <p className="text-xs text-slate-400 font-medium">CRM & Sistema Operativo Integral</p>
+          <p className="text-xs text-slate-400 font-medium">CRM & Sistema Operativo Integral (Alpha 0.0.1)</p>
         </div>
       </div>
 

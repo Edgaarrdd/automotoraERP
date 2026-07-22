@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Car, GitCommit, FileText, BadgePercent, PhoneCall, Layers } from 'lucide-react';
+import { LayoutDashboard, Car, GitCommit, FileText, BadgePercent, PhoneCall, ShieldCheck, Layers } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab, currentUser }) {
   const role = currentUser?.rol || 'ADMIN';
@@ -12,6 +12,7 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }) {
     { id: 'quotes', label: 'Cotizaciones', icon: FileText, roles: ['ADMIN', 'GERENTE', 'VENDEDOR'] },
     { id: 'fi', label: 'F&I Financiamiento', icon: BadgePercent, roles: ['ADMIN', 'GERENTE', 'F_AND_I', 'VENDEDOR'] },
     { id: 'bdc', label: 'BDC & Recepción', icon: PhoneCall, roles: ['ADMIN', 'GERENTE', 'BDC', 'VENDEDOR'] },
+    { id: 'security', label: 'Seguridad & Roles', icon: ShieldCheck, roles: ['ADMIN', 'GERENTE', 'VENDEDOR', 'MARKETING', 'F_AND_I', 'TALLER', 'BDC'], badge: 'Alpha 0.0.1' },
   ];
 
   const filteredItems = navItems.filter((item) => item.roles.includes(role));
@@ -31,14 +32,21 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }) {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all ${
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-sm transition-all ${
                     isActive
                       ? 'bg-sky-600 text-white font-semibold shadow-lg shadow-sky-600/30'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                  <span>{item.label}</span>
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -51,13 +59,13 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }) {
             <Layers className="w-4 h-4" /> Multi-Tenant Active
           </div>
           <p className="text-[11px] text-slate-400 leading-relaxed">
-            Schema aislado: <span className="font-mono text-slate-300">tenant_lascondes</span>
+            Schema aislado: <span className="font-mono text-slate-300">tenant_origen</span>
           </p>
         </div>
       </div>
 
       <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-500 font-medium text-center">
-        CRM Automotora v1.0.0 (MVP)
+        CRM Automotora v0.0.1 (Alpha)
       </div>
     </aside>
   );

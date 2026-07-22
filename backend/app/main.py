@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
 from .seed import seed_database
-from .routers import auth, vehicles, leads, quotes, dashboard, fi, bdc
+from .routers import auth, vehicles, leads, quotes, dashboard, fi, bdc, security
 
 Base.metadata.create_all(bind=engine)
 
@@ -37,6 +37,7 @@ app.include_router(quotes.router)
 app.include_router(dashboard.router)
 app.include_router(fi.router)
 app.include_router(bdc.router)
+app.include_router(security.router)
 
 @app.on_event("startup")
 def startup_event():

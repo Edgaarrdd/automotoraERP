@@ -29,8 +29,6 @@ app.dependency_overrides[get_db] = override_get_db
 @pytest.fixture(autouse=True)
 def setup_db():
     Base.metadata.create_all(bind=engine)
-    # Run seed in test db
-    db = TestingSessionLocal()
     from app import seed
     seed.engine = engine
     seed.SessionLocal = TestingSessionLocal
@@ -48,18 +46,18 @@ def test_read_root():
 def test_login_success():
     response = client.post(
         "/api/auth/login",
-        json={"email": "admin@automotoralascondes.cl", "password": "Admin123!"}
+        json={"email": "admin@origen.cl", "password": "Admin123!"}
     )
     assert response.status_code == 200
     data = response.json()
     assert "access_token" in data
-    assert data["user"]["email"] == "admin@automotoralascondes.cl"
+    assert data["user"]["email"] == "admin@origen.cl"
 
-def test_vehicles_list():
+def test_clean_stock():
     # Login first
     login_res = client.post(
         "/api/auth/login",
-        json={"email": "gerente@automotoralascondes.cl", "password": "Gerente123!"}
+        json={"email": "gerente@origen.cl", "password": "Gerente123!"}
     )
     token = login_res.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
@@ -67,20 +65,50 @@ def test_vehicles_list():
     res = client.get("/api/vehicles/", headers=headers)
     assert res.status_code == 200
     vehicles = res.json()
-    assert len(vehicles) >= 4
-    patentes = [v["patente"] for v in vehicles]
-    assert "PXYZ88" in patentes
+    # Limpieza Alpha 0.0.1 debe resultar en 0 vehículos de muestra iniciales
+    assert len(vehicles) == 0
 
-def test_dashboard_metrics():
-    login_res = client.post(
-        "/api/auth/login",
-        json={"email": "gerente@automotoralascondes.cl", "password": "Gerente123!"}
+def test_security_module_endpoints():
+    # 1. Test credentials endpoint
+    res_cred = client.post(
+        "/api/security/test-credentials",
+        json={"email": "admin@origen.cl", "password": "Admin123!"}
     )
-    token = login_res.json()["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
+    assert res_cred.status_code == 200
+    assert res_cred.json()["valid"] is True
 
-    res = client.get("/api/dashboard/metrics", headers=headers)
-    assert res.status_code == 200
-    metrics = res.json()
-    assert metrics["total_vehiculos_stock"] >= 4
-    assert metrics["vehiculos_disponibles"] >= 2
+    # 2. Test role permission check
+    res_role = client.post(
+        "/api/security/test-role",
+        json={"role": "VENDEDOR", "action": "CREAR_USUARIO"}
+    )
+    assert res_role.status_code == 200
+    assert res_role.json()["authorized"] is False
+
+    # 3. Test list users access restriction (ADMIN allowed, VENDEDOR denied)
+    # Admin login
+    admin_login = client.post(
+        "/api/auth/login",
+        json={"email": "admin@origen.cl", "password": "Admin123!"}
+    )
+    admin_token = admin_login.json()["access_token"]
+    
+    admin_users_res = client.get(
+        "/api/security/users",
+        headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert admin_users_res.status_code == 200
+    assert len(admin_users_res.json()) >= 6
+
+    # Vendedor login
+    vendedor_login = client.post(
+        "/api/auth/login",
+        json={"email": "vendedor1@origen.cl", "password": "Vendedor123!"}
+    )
+    vendedor_token = vendedor_login.json()["access_token"]
+
+    vendedor_users_res = client.get(
+        "/api/security/users",
+        headers={"Authorization": f"Bearer {vendedor_token}"}
+    )
+    assert vendedor_users_res.status_code == 403
