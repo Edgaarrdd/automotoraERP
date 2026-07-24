@@ -52,7 +52,7 @@ export default function BDCSection({ bdcLeads, onSubmitBDC }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Rapid Form Left */}
-        <div className="lg:col-span-5 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div className="lg:col-span-5 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4" data-tour="bdc-new-contact">
           <h3 className="text-sm font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
             <UserPlus className="w-4 h-4 text-amber-400" /> Capturar Prospecto Rápido
           </h3>
@@ -158,7 +158,7 @@ export default function BDCSection({ bdcLeads, onSubmitBDC }) {
         </div>
 
         {/* Recent BDC Captures Right */}
-        <div className="lg:col-span-7 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+        <div className="lg:col-span-7 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4" data-tour="bdc-assign-seller">
           <h3 className="text-sm font-bold text-white flex items-center justify-between border-b border-slate-800 pb-3">
             <span>Últimas Capturas BDC ({bdcLeads.length})</span>
             <span className="text-xs font-medium text-amber-400">Atención BDC Salón</span>

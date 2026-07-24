@@ -10,6 +10,7 @@ import QuoteGenerator from './components/QuoteGenerator';
 import FISection from './components/FISection';
 import BDCSection from './components/BDCSection';
 import SecuritySection from './components/SecuritySection';
+import OnboardingTour from './components/OnboardingTour';
 import { apiFetch, getCurrentUserData, setCurrentUserData } from './services/api';
 
 const DEFAULT_USERS = {
@@ -19,12 +20,16 @@ const DEFAULT_USERS = {
   'vendedor2@origen.cl': { id: 'u4', nombre: 'Camila Torres (Asesora)', email: 'vendedor2@origen.cl', rol: 'VENDEDOR', tenant_id: 'tenant_origen' },
   'fi@origen.cl': { id: 'u5', nombre: 'Felipe Reyes (Ejecutivo F&I)', email: 'fi@origen.cl', rol: 'F_AND_I', tenant_id: 'tenant_origen' },
   'bdc@origen.cl': { id: 'u6', nombre: 'Valentina Morales (Agente BDC)', email: 'bdc@origen.cl', rol: 'BDC', tenant_id: 'tenant_origen' },
+  'marketing@origen.cl': { id: 'u7', nombre: 'Gonzalo Paz (Marketing)', email: 'marketing@origen.cl', rol: 'MARKETING', tenant_id: 'tenant_origen' },
+  'taller@origen.cl': { id: 'u8', nombre: 'Hugo Navarro (Jefe Taller)', email: 'taller@origen.cl', rol: 'TALLER', tenant_id: 'tenant_origen' }
 };
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => getCurrentUserData() || DEFAULT_USERS['admin@origen.cl']);
   const [activeTab, setActiveTab] = useState('security'); // Pestaña principal al iniciar Alpha 0.0.1
-  
+  const [activeSubTab, setActiveSubTab] = useState('tester');
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
   // Arreglos vacíos iniciales limpios sin datos mock para Alpha 0.0.1
   const [vehicles, setVehicles] = useState([]);
   const [leads, setLeads] = useState([]);
@@ -43,10 +48,34 @@ export default function App() {
       .catch(() => {});
   }, []);
 
+  // Auto-launch tour on initial load or role switch if not completed
+  useEffect(() => {
+    const roleKey = `onboarding_completed_${currentUser?.rol || 'ADMIN'}`;
+    const hasCompleted = localStorage.getItem(roleKey);
+    if (!hasCompleted) {
+      const timer = setTimeout(() => setIsTourOpen(true), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [currentUser?.rol]);
+
+  const handleStartTour = () => {
+    setIsTourOpen(true);
+  };
+
+  const handleCompleteTour = () => {
+    const roleKey = `onboarding_completed_${currentUser?.rol || 'ADMIN'}`;
+    localStorage.setItem(roleKey, 'true');
+    setIsTourOpen(false);
+  };
+
   const handleSwitchUser = (email) => {
     const u = DEFAULT_USERS[email] || DEFAULT_USERS['admin@origen.cl'];
     setCurrentUser(u);
     setCurrentUserData(u);
+    const roleKey = `onboarding_completed_${u.rol}`;
+    if (!localStorage.getItem(roleKey)) {
+      setTimeout(() => setIsTourOpen(true), 400);
+    }
   };
 
   const handleLogout = () => {
@@ -123,6 +152,7 @@ export default function App() {
         currentUser={currentUser}
         onSwitchUser={handleSwitchUser}
         onLogout={handleLogout}
+        onStartTour={handleStartTour}
       />
 
       {/* Main Body */}
@@ -137,7 +167,11 @@ export default function App() {
         {/* Content Area Right */}
         <main className="flex-1 min-w-0">
           {activeTab === 'security' && (
-            <SecuritySection currentUser={currentUser} />
+            <SecuritySection
+              currentUser={currentUser}
+              activeSubTab={activeSubTab}
+              setActiveSubTab={setActiveSubTab}
+            />
           )}
 
           {activeTab === 'dashboard' && (
@@ -196,6 +230,18 @@ export default function App() {
           onSubmit={handleCreateVehicle}
         />
       )}
+
+      {/* Onboarding Tour Component */}
+      <OnboardingTour
+        role={currentUser?.rol || 'ADMIN'}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        activeSubTab={activeSubTab}
+        setActiveSubTab={setActiveSubTab}
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onComplete={handleCompleteTour}
+      />
     </div>
   );
 }

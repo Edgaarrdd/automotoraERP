@@ -32,6 +32,7 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }) {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
+                  data-tour={`nav-${item.id}`}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-sm transition-all ${
                     isActive
                       ? 'bg-sky-600 text-white font-semibold shadow-lg shadow-sky-600/30'
@@ -54,7 +55,7 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }) {
         </div>
 
         {/* System info widget */}
-        <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50">
+        <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/50" data-tour="tenant-badge">
           <div className="flex items-center gap-2 text-xs font-semibold text-sky-400 mb-1">
             <Layers className="w-4 h-4" /> Multi-Tenant Active
           </div>

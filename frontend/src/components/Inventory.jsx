@@ -38,6 +38,7 @@ export default function Inventory({ vehicles, onSelectVehicle, onOpenNewVehicleM
         {['ADMIN', 'GERENTE', 'VENDEDOR', 'TALLER'].includes(currentUser?.rol) && (
           <button
             onClick={onOpenNewVehicleModal}
+            data-tour="inventory-add-btn"
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs shadow-lg shadow-sky-600/30 transition-all hover:scale-105"
           >
             <Plus className="w-4 h-4" /> Ingresar Nuevo Vehículo
@@ -141,7 +142,7 @@ export default function Inventory({ vehicles, onSelectVehicle, onOpenNewVehicleM
                   )}
                 </div>
 
-                <div className="p-2 rounded-xl bg-slate-800 text-sky-400 group-hover:bg-sky-600 group-hover:text-white transition-all">
+                <div className="p-2 rounded-xl bg-slate-800 text-sky-400 group-hover:bg-sky-600 group-hover:text-white transition-all" data-tour="inventory-reserve-btn">
                   <Eye className="w-4 h-4" />
                 </div>
               </div>

@@ -10,7 +10,7 @@ export default function FISection({ fiSolicitudes }) {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center" data-tour="fi-insurance-calc">
         <div>
           <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
             <BadgePercent className="w-6 h-6 text-emerald-400" /> Módulo F&I (Finanzas & Seguros)
@@ -21,7 +21,7 @@ export default function FISection({ fiSolicitudes }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-tour="fi-pending-table">
         {fiSolicitudes.map((sol) => (
           <div key={sol.id} className="glass-card p-5 rounded-2xl border border-slate-800 space-y-4 flex flex-col justify-between">
             <div className="space-y-3">
@@ -66,7 +66,7 @@ export default function FISection({ fiSolicitudes }) {
             </div>
 
             {/* Actions */}
-            <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+            <div className="pt-3 border-t border-slate-800 flex items-center justify-between" data-tour="fi-approval-actions">
               <button className="text-[11px] font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1">
                 <Send className="w-3.5 h-3.5" /> Reenviar a otra Financiera
               </button>

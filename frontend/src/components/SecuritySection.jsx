@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { apiFetch } from '../services/api';
 
-export default function SecuritySection({ currentUser }) {
-  const [activeSubTab, setActiveSubTab] = useState('tester');
+export default function SecuritySection({ currentUser, activeSubTab: externalSubTab, setActiveSubTab: setExternalSubTab }) {
+  const [internalSubTab, setInternalSubTab] = useState('tester');
+  const activeSubTab = externalSubTab || internalSubTab;
+  const setActiveSubTab = setExternalSubTab || setInternalSubTab;
 
   // State for Credentials Tester
   const [testEmail, setTestEmail] = useState('admin@origen.cl');
@@ -299,7 +301,7 @@ export default function SecuritySection({ currentUser }) {
 
       {/* SubTab 2: Role Matrix (RBAC) */}
       {activeSubTab === 'roles' && (
-        <div className="space-y-6">
+        <div className="space-y-6" data-tour="rbac-matrix">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
             <h2 className="text-lg font-semibold text-white mb-2">Simulador de Permisos y Roles (RBAC)</h2>
             <p className="text-slate-400 text-xs mb-6">
@@ -450,7 +452,7 @@ export default function SecuritySection({ currentUser }) {
             </div>
           ) : (
             /* Admin view for user management */
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6" data-tour="audit-log">
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-lg font-semibold text-white">Directorio de Usuarios de Sistema en BD</h2>

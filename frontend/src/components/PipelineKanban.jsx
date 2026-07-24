@@ -114,6 +114,7 @@ export default function PipelineKanban({ leads, onUpdateStage, onOpenNewLeadModa
 
         <button
           onClick={onOpenNewLeadModal}
+          data-tour="kanban-new-lead"
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs shadow-lg shadow-sky-600/30 transition-all hover:scale-105"
         >
           <Plus className="w-4 h-4" /> Crear Oportunidad Lead

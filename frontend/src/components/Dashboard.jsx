@@ -59,7 +59,7 @@ export default function Dashboard({ metrics, vehicles, leads, onQuickAction, cur
       )}
 
       {/* Top 4 KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-tour="dash-metrics">
         {/* Total Stock */}
         <div className="glass-card glass-card-hover p-5 rounded-2xl space-y-2">
           <div className="flex items-center justify-between">
@@ -126,7 +126,7 @@ export default function Dashboard({ metrics, vehicles, leads, onQuickAction, cur
       </div>
 
       {/* Middle Grid: Stock Showcase & Pipeline Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" data-tour="dash-sales-chart">
         {/* Vehicles Preview List */}
         <div className="lg:col-span-2 glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
           <div className="flex items-center justify-between">
