@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Any
 from datetime import datetime
-from .models import RoleEnum, CustomerTypeEnum, VehicleStatusEnum, FuelTypeEnum, TransmissionEnum, PipelineStageEnum, LeadScoreEnum
+from .models import RoleEnum, CustomerTypeEnum, VehicleStatusEnum, FuelTypeEnum, TransmissionEnum, PipelineStageEnum, LeadScoreEnum, AppointmentTypeEnum, AppointmentStatusEnum
 
 # Auth Schemas
 class Token(BaseModel):
@@ -214,3 +214,30 @@ class DashboardMetrics(BaseModel):
     monto_cotizado_mes: float
     ventas_totales_monto_mes: float
     tasa_conversion_pct: float
+
+# Appointment Schemas
+class AppointmentBase(BaseModel):
+    titulo: str
+    tipo: AppointmentTypeEnum = AppointmentTypeEnum.TEST_DRIVE
+    fecha_inicio: datetime
+    fecha_fin: datetime
+    id_cliente: Optional[str] = None
+    id_vehiculo: Optional[str] = None
+    id_lead: Optional[str] = None
+    notas: Optional[str] = None
+
+class AppointmentCreate(AppointmentBase):
+    id_vendedor: Optional[str] = None
+
+class AppointmentUpdateStatus(BaseModel):
+    estado: AppointmentStatusEnum
+
+class AppointmentOut(AppointmentBase):
+    id: str
+    tenant_id: Optional[str] = None
+    id_vendedor: str
+    estado: AppointmentStatusEnum
+    fecha_creacion: datetime
+
+    class Config:
+        from_attributes = True

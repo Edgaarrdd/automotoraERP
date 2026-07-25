@@ -56,6 +56,18 @@ class LeadScoreEnum(str, enum.Enum):
     TIBIO = "TIBIO"
     FRIO = "FRIO"
 
+class AppointmentTypeEnum(str, enum.Enum):
+    TEST_DRIVE = "TEST_DRIVE"
+    ENTREGA_VEHICULO = "ENTREGA_VEHICULO"
+    REUNION_NEGOCIACION = "REUNION_NEGOCIACION"
+    TALLER_PDI = "TALLER_PDI"
+
+class AppointmentStatusEnum(str, enum.Enum):
+    AGENDADA = "AGENDADA"
+    COMPLETADA = "COMPLETADA"
+    CANCELADA = "CANCELADA"
+    REPROGRAMADA = "REPROGRAMADA"
+
 class Tenant(Base):
     __tablename__ = "tenants"
 
@@ -223,3 +235,20 @@ class BDCLead(Base):
     estado = Column(String, default="PENDIENTE_ASIGNACION")
     notas = Column(Text, nullable=True)
     fecha_recepcion = Column(DateTime, default=datetime.utcnow)
+
+class Appointment(Base):
+    __tablename__ = "citas_agenda"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    tenant_id = Column(String, ForeignKey("tenants.id"), nullable=True)
+    titulo = Column(String, nullable=False)
+    tipo = Column(SQLEnum(AppointmentTypeEnum), default=AppointmentTypeEnum.TEST_DRIVE)
+    fecha_inicio = Column(DateTime, nullable=False)
+    fecha_fin = Column(DateTime, nullable=False)
+    id_vendedor = Column(String, ForeignKey("usuarios.id"), nullable=False)
+    id_cliente = Column(String, ForeignKey("clientes.id"), nullable=True)
+    id_vehiculo = Column(String, ForeignKey("vehiculos.id"), nullable=True)
+    id_lead = Column(String, ForeignKey("leads_oportunidades.id"), nullable=True)
+    estado = Column(SQLEnum(AppointmentStatusEnum), default=AppointmentStatusEnum.AGENDADA)
+    notas = Column(Text, nullable=True)
+    fecha_creacion = Column(DateTime, default=datetime.utcnow)

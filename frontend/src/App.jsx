@@ -7,11 +7,14 @@ import VehicleModal from './components/VehicleModal';
 import NewVehicleModal from './components/NewVehicleModal';
 import NewLeadModal from './components/NewLeadModal';
 import NewFISolicitudModal from './components/NewFISolicitudModal';
+import NewAppointmentModal from './components/NewAppointmentModal';
 import PipelineKanban from './components/PipelineKanban';
+import CalendarSection from './components/CalendarSection';
 import QuoteGenerator from './components/QuoteGenerator';
 import FISection from './components/FISection';
 import BDCSection from './components/BDCSection';
 import SecuritySection from './components/SecuritySection';
+import DocsSection from './components/DocsSection';
 import OnboardingTour from './components/OnboardingTour';
 import { apiFetch, getCurrentUserData, setCurrentUserData, setAuthToken } from './services/api';
 
@@ -37,12 +40,14 @@ export default function App() {
   const [leads, setLeads] = useState([]);
   const [fiSolicitudes, setFiSolicitudes] = useState([]);
   const [bdcLeads, setBdcLeads] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [metrics, setMetrics] = useState(null);
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [isNewVehicleModalOpen, setIsNewVehicleModalOpen] = useState(false);
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
   const [isNewFISolicitudModalOpen, setIsNewFISolicitudModalOpen] = useState(false);
+  const [isNewAppointmentModalOpen, setIsNewAppointmentModalOpen] = useState(false);
 
   // Function to ensure active user JWT authentication token with backend API
   const ensureUserToken = async (userObj) => {
@@ -65,11 +70,12 @@ export default function App() {
   // Load all entities from backend API
   const refreshAllData = async () => {
     try {
-      const [vData, lData, fiData, bdcData, mData] = await Promise.allSettled([
+      const [vData, lData, fiData, bdcData, appData, mData] = await Promise.allSettled([
         apiFetch('/vehicles/'),
         apiFetch('/leads/'),
         apiFetch('/fi/'),
         apiFetch('/bdc/'),
+        apiFetch('/appointments/'),
         apiFetch('/dashboard/metrics')
       ]);
 
@@ -77,6 +83,7 @@ export default function App() {
       if (lData.status === 'fulfilled' && Array.isArray(lData.value)) setLeads(lData.value);
       if (fiData.status === 'fulfilled' && Array.isArray(fiData.value)) setFiSolicitudes(fiData.value);
       if (bdcData.status === 'fulfilled' && Array.isArray(bdcData.value)) setBdcLeads(bdcData.value);
+      if (appData.status === 'fulfilled' && Array.isArray(appData.value)) setAppointments(appData.value);
       if (mData.status === 'fulfilled' && mData.value) setMetrics(mData.value);
     } catch (err) {
       console.warn('Error refreshing data from API:', err.message);
@@ -140,7 +147,6 @@ export default function App() {
         setVehicles((prev) => [created, ...prev]);
       }
     } catch (e) {
-      // Local fallback
       const newVehicle = {
         ...vehicleData,
         id: `v_${Date.now()}`,
@@ -169,7 +175,6 @@ export default function App() {
 
   const handleCreateLead = async (leadData) => {
     try {
-      // 1. Create or ensure customer record
       let customerId = null;
       try {
         const custRes = await apiFetch('/leads/customers', {
@@ -187,7 +192,6 @@ export default function App() {
         console.warn('Customer auto-create warning:', custErr.message);
       }
 
-      // 2. Create lead opportunity
       const leadPayload = {
         id_cliente: customerId,
         id_vehiculo_interes: leadData.id_vehiculo_interes || null,
@@ -206,7 +210,6 @@ export default function App() {
         setLeads((prev) => [created, ...prev]);
       }
     } catch (e) {
-      // Fallback
       const newLead = {
         id: `l_${Date.now()}`,
         customer: { nombre_completo: leadData.nombre_completo, telefono: leadData.telefono },
@@ -287,6 +290,48 @@ export default function App() {
     } catch (e) {
       console.warn('Quote creation API fallback:', e.message);
     }
+    refreshAllData();
+  };
+
+  const handleCreateAppointment = async (appData) => {
+    try {
+      const created = await apiFetch('/appointments/', {
+        method: 'POST',
+        body: JSON.stringify(appData)
+      });
+      if (created) {
+        setAppointments((prev) => [created, ...prev]);
+      }
+    } catch (e) {
+      const newApp = { ...appData, id: `a_${Date.now()}`, estado: 'AGENDADA' };
+      setAppointments((prev) => [newApp, ...prev]);
+    }
+    setIsNewAppointmentModalOpen(false);
+    refreshAllData();
+  };
+
+  const handleUpdateAppointmentStatus = async (appId, newStatus) => {
+    try {
+      await apiFetch(`/appointments/${appId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ estado: newStatus })
+      });
+    } catch (e) {
+      console.warn('Appointment status fallback:', e.message);
+    }
+    setAppointments((prev) =>
+      prev.map((a) => (a.id === appId ? { ...a, estado: newStatus } : a))
+    );
+    refreshAllData();
+  };
+
+  const handleDeleteAppointment = async (appId) => {
+    try {
+      await apiFetch(`/appointments/${appId}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn('Appointment delete fallback:', e.message);
+    }
+    setAppointments((prev) => prev.filter((a) => a.id !== appId));
     refreshAllData();
   };
 
@@ -377,6 +422,16 @@ export default function App() {
             />
           )}
 
+          {activeTab === 'calendar' && (
+            <CalendarSection
+              appointments={appointments}
+              vehicles={vehicles}
+              onOpenNewAppointmentModal={() => setIsNewAppointmentModalOpen(true)}
+              onUpdateStatus={handleUpdateAppointmentStatus}
+              onDeleteAppointment={handleDeleteAppointment}
+            />
+          )}
+
           {activeTab === 'quotes' && (
             <QuoteGenerator
               vehicles={vehicles}
@@ -395,6 +450,8 @@ export default function App() {
           {activeTab === 'bdc' && (
             <BDCSection bdcLeads={bdcLeads} onSubmitBDC={handleCreateBDCLead} />
           )}
+
+          {activeTab === 'docs' && <DocsSection />}
         </main>
       </div>
 
@@ -431,6 +488,14 @@ export default function App() {
         />
       )}
 
+      {isNewAppointmentModalOpen && (
+        <NewAppointmentModal
+          vehicles={vehicles}
+          onClose={() => setIsNewAppointmentModalOpen(false)}
+          onSubmit={handleCreateAppointment}
+        />
+      )}
+
       {/* Onboarding Tour Component */}
       <OnboardingTour
         role={currentUser?.rol || 'ADMIN'}
@@ -445,3 +510,4 @@ export default function App() {
     </div>
   );
 }
+

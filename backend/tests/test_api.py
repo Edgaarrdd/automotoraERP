@@ -198,3 +198,64 @@ def test_full_persistence_flow():
     assert metrics["total_vehiculos_stock"] == 1
     assert metrics["total_leads_activos"] == 1
 
+def test_appointments_flow():
+    # Login
+    login_res = client.post(
+        "/api/auth/login",
+        json={"email": "vendedor1@origen.cl", "password": "Vendedor123!"}
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Create appointment
+    create_res = client.post(
+        "/api/appointments/",
+        headers=headers,
+        json={
+            "titulo": "Test Drive Suzuki Swift",
+            "tipo": "TEST_DRIVE",
+            "fecha_inicio": "2026-07-26T10:00:00",
+            "fecha_fin": "2026-07-26T11:00:00",
+            "notas": "Ruta autopista"
+        }
+    )
+    assert create_res.status_code == 201
+    app_id = create_res.json()["id"]
+
+    # List appointments
+    get_res = client.get("/api/appointments/", headers=headers)
+    assert get_res.status_code == 200
+    assert len(get_res.json()) >= 1
+
+    # Update status to COMPLETADA
+    patch_res = client.patch(
+        f"/api/appointments/{app_id}/status",
+        headers=headers,
+        json={"estado": "COMPLETADA"}
+    )
+    assert patch_res.status_code == 200
+    assert patch_res.json()["estado"] == "COMPLETADA"
+
+def test_decode_patent_flow():
+    login_res = client.post(
+        "/api/auth/login",
+        json={"email": "vendedor1@origen.cl", "password": "Vendedor123!"}
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Test preset patent decoding
+    res_kjpw = client.get("/api/vehicles/decode/KJPW99", headers=headers)
+    assert res_kjpw.status_code == 200
+    data = res_kjpw.json()
+    assert data["marca"] == "Nissan"
+    assert data["modelo"] == "Kicks"
+    assert "historial_legal" in data
+
+    # Test dynamic fallback patent decoding
+    res_dyn = client.get("/api/vehicles/decode/RSTU77", headers=headers)
+    assert res_dyn.status_code == 200
+    assert res_dyn.json()["patente"] == "RSTU77"
+
+
+
