@@ -4,9 +4,24 @@
 
 ---
 
+## 📚 Documentación del Proyecto
+
+Toda la documentación técnica, arquitectónica y operativa se ha consolidado en la carpeta [`/docs`](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs):
+
+- 📄 **[DOCUMENTATION.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/DOCUMENTATION.md):** Índice principal de la documentación del sistema.
+- 📋 **[PRD_CRM_Automotora.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/PRD_CRM_Automotora.md):** Documento de Requisitos de Producto (PRD).
+- 🏗️ **[Arquitectura_Modelo_Datos_CRM.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/Arquitectura_Modelo_Datos_CRM.md):** Diagramas de arquitectura y modelo ER de base de datos.
+- 💼 **[Casos_Uso_CRM_Automotora.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/Casos_Uso_CRM_Automotora.md):** Casos de uso detallados del CRM.
+- 🌐 **[DOCUMENTACION_TECNICA_CMS_STOREFRONT.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/DOCUMENTACION_TECNICA_CMS_STOREFRONT.md):** Especificaciones técnicas del CMS y Portal Web/Storefront.
+- 👥 **[DOCUMENTACION_ONBOARDING_ROLES.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/DOCUMENTACION_ONBOARDING_ROLES.md):** Guía de incorporación y matriz de permisos por rol (RBAC).
+- 🔒 **[SECURITY.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/SECURITY.md) / [DOCUMENTACION_SEGURIDAD_ALPHA_0.0.1.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/DOCUMENTACION_SEGURIDAD_ALPHA_0.0.1.md):** Políticas y especificaciones de seguridad.
+- 🐳 **[DOCKER.md](file:///C:/Users/edgar/OneDrive/Escritorio/automotoraERP/docs/DOCKER.md):** Guía de despliegue mediante Docker y Docker Compose.
+
+---
+
 ## 🚀 Módulos Implementados en Fase 1 (MVP)
 
-1. **Dashboard Operativo y KPIs en Tiempo Real:** Stock total, disponibles en salón, leas activos, ventas del mes en $CLP y tasa de conversión.
+1. **Dashboard Operativo y KPIs en Tiempo Real:** Stock total, disponibles en salón, leads activos, ventas del mes en $CLP y tasa de conversión.
 2. **Inventario de Vehículos con Ficha Técnica Digital:** Ficha completa de vehículos, fotos, datos de motor/transmisión, consulta por patente (API / simulación), historial legal (multas/prendas) y matriz RBAC de precios.
 3. **Pipeline Kanban Comercial de Ventas:** Tablero Kanban interactivo con 6 etapas (`NUEVO`, `CONTACTADO`, `TEST_DRIVE_AGENDADO`, `NEGOCIACION`, `RESERVADO`, `CERRADO_GANADO`) y registro de motivo de pérdida.
 4. **Generador de Cotizaciones Financieras:** Calculadora de crédito automotriz en tiempo real con pie %, cuotas (12 a 60 meses), tasa de interés, seguro automotriz opcional y formato imprimible para PDF.
@@ -70,3 +85,4 @@ npm run dev
 | **Vendedor** | `vendedor1@automotoralascondes.cl` | `Vendedor123!` |
 | **F&I Asesor** | `fi@automotoralascondes.cl` | `Fi123!` |
 | **BDC Recepción** | `bdc@automotoralascondes.cl` | `Bdc123!` |
+
