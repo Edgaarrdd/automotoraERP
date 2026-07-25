@@ -10,6 +10,8 @@ import NewFISolicitudModal from './components/NewFISolicitudModal';
 import NewAppointmentModal from './components/NewAppointmentModal';
 import PipelineKanban from './components/PipelineKanban';
 import CalendarSection from './components/CalendarSection';
+import ConsignorPortalSection from './components/ConsignorPortalSection';
+import CommissionsSection from './components/CommissionsSection';
 import QuoteGenerator from './components/QuoteGenerator';
 import FISection from './components/FISection';
 import BDCSection from './components/BDCSection';
@@ -420,6 +422,14 @@ export default function App() {
               onOpenNewLeadModal={() => setIsNewLeadModalOpen(true)}
               currentUser={currentUser}
             />
+          )}
+
+          {activeTab === 'consignments' && (
+            <ConsignorPortalSection vehicles={vehicles} />
+          )}
+
+          {activeTab === 'commissions' && (
+            <CommissionsSection currentUser={currentUser} />
           )}
 
           {activeTab === 'calendar' && (

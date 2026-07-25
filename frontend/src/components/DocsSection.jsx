@@ -177,6 +177,22 @@ export default function DocsSection() {
                 </div>
                 <span className="text-slate-500 text-[11px]">Avanza etapa de lead en embudo Kanban</span>
               </div>
+
+              <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-extrabold">GET</span>
+                  <span className="text-slate-200">/api/consignments/</span>
+                </div>
+                <span className="text-slate-500 text-[11px]">Listar autos consignados y liquidación neta al dueño</span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-extrabold">GET</span>
+                  <span className="text-slate-200">/api/commissions/summary</span>
+                </div>
+                <span className="text-slate-500 text-[11px]">Cálculo de comisiones base (1.5%) y bonos F&I por vendedor</span>
+              </div>
             </div>
           </div>
         </div>

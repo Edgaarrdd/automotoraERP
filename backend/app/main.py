@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
 from .seed import seed_database
-from .routers import auth, vehicles, leads, quotes, dashboard, fi, bdc, security, appointments
+from .routers import auth, vehicles, leads, quotes, dashboard, fi, bdc, security, appointments, consignments, commissions
 
 Base.metadata.create_all(bind=engine)
 
@@ -17,8 +17,7 @@ origins = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-    "*"
+    "http://127.0.0.1:5173"
 ]
 
 app.add_middleware(
@@ -39,6 +38,8 @@ app.include_router(fi.router)
 app.include_router(bdc.router)
 app.include_router(security.router)
 app.include_router(appointments.router)
+app.include_router(consignments.router)
+app.include_router(commissions.router)
 
 @app.on_event("startup")
 def startup_event():

@@ -257,5 +257,69 @@ def test_decode_patent_flow():
     assert res_dyn.status_code == 200
     assert res_dyn.json()["patente"] == "RSTU77"
 
+def test_consignments_flow():
+    login_res = client.post(
+        "/api/auth/login",
+        json={"email": "admin@origen.cl", "password": "Admin123!"}
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Create vehicle for consignment
+    v_res = client.post(
+        "/api/vehicles/",
+        headers=headers,
+        json={
+            "patente": "CONS88",
+            "marca": "Mazda",
+            "modelo": "CX-5",
+            "año": 2022,
+            "kilometraje": 30000,
+            "precio_compra_tasacion": 13000000,
+            "precio_venta_publico": 15990000,
+            "estado": "DISPONIBLE"
+        }
+    )
+    assert v_res.status_code == 201
+    vehicle_id = v_res.json()["id"]
+
+    # Get consignments list
+    list_res = client.get("/api/consignments/", headers=headers)
+    assert list_res.status_code == 200
+    assert len(list_res.json()) >= 1
+
+    # Get consignment summary for vehicle
+    summary_res = client.get(f"/api/consignments/{vehicle_id}/summary", headers=headers)
+    assert summary_res.status_code == 200
+    s_data = summary_res.json()
+    assert s_data["financiero"]["precio_publico"] == 15990000
+    assert "linea_tiempo_estado" in s_data
+
+def test_commissions_flow():
+    login_res = client.post(
+        "/api/auth/login",
+        json={"email": "admin@origen.cl", "password": "Admin123!"}
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Get commissions summary
+    comm_res = client.get("/api/commissions/summary", headers=headers)
+    assert comm_res.status_code == 200
+    c_data = comm_res.json()
+    assert isinstance(c_data, list)
+    assert len(c_data) >= 1
+
+    # Update commission status
+    seller_id = c_data[0]["vendedor_id"]
+    patch_res = client.patch(
+        f"/api/commissions/{seller_id}/status?estado_nuevo=PAGADA",
+        headers=headers
+    )
+    assert patch_res.status_code == 200
+    assert patch_res.json()["estado_liquidacion"] == "PAGADA"
+
+
+
 
 

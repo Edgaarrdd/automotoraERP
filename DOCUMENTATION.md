@@ -113,6 +113,14 @@ Los modelos principales definidos en `backend/app/models.py`:
 - `GET /api/bdc/`: Oportunidades captadas en recepción / llamadas entrantes / portales.
 - `POST /api/bdc/`: Crear lead BDC.
 
+### 👁️ Portal del Consignatario (`/api/consignments`)
+- `GET /api/consignments/`: Listar vehículos consignados con métricas de visibilidad y datos del dueño.
+- `GET /api/consignments/{vehicle_id}/summary`: Informe detallado de transparencia (comisión automotora 3%, liquidación neta al dueño, cotizaciones emitidas, test drives e historial).
+
+### 🏆 Liquidación de Comisiones & Reportes (`/api/commissions`)
+- `GET /api/commissions/summary`: Resumen acumulado mensual por vendedor (ventas totales, margen bruto, comisión base 1.5%, bono crédito F&I $50.000 y total a liquidar).
+- `PATCH /api/commissions/{vendedor_id}/status`: Aprobar o actualizar el estado de pago de liquidación de sueldo comercial.
+
 ---
 
 ## 5. Módulos del Frontend (React + Tailwind CSS)
@@ -120,13 +128,15 @@ Los modelos principales definidos en `backend/app/models.py`:
 1. **Dashboard:** Métricas comerciales en tiempo real, accesos rápidos y estado del stock.
 2. **Inventario Autos:** Catálogo visual con tarjetas glassmorphic, modal de detalle, cambio de estado y decodificador de patentes.
 3. **Pipeline Ventas (Kanban):** Tablero arrastrable por etapas de conversión con modal de motivo de pérdida.
-4. **Agenda & Test Drives:** Calendario de citas por tipo (Test Drive, Entrega Auto, Negociación, PDI) y estado.
-5. **Cotizador PDF:** Simulador financiero dinámico con pie %, cuotas, Tasa de Interés, VFG Crédito Inteligente e impresión limpia `@media print`.
-6. **F&I Financiamiento:** Módulo de gestión de solicitudes a entidades crediticias.
-7. **BDC & Recepción:** Captura rápida de prospectos y asignación a vendedores.
-8. **Seguridad & Roles:** Matriz interactiva RBAC y cambiador rápido de usuario para testing.
-9. **Onboarding Tour:** Tour interactivo guiado por cada rol usando `driver.js`.
-10. **Portal de Documentación (`DocsSection`):** Interfaz para consultar la documentación directamente desde la aplicación.
+4. **Portal del Consignatario:** Ficha de transparencia comercial, desglose de liquidación neta al dueño y línea de tiempo del vehículo.
+5. **Comisiones Ventas:** Módulo de liquidación de sueldos comerciales con cálculo de comisión base (1.5%), bonos F&I y aprobación de pago.
+6. **Agenda & Test Drives:** Calendario de citas por tipo (Test Drive, Entrega Auto, Negociación, PDI) y estado.
+7. **Cotizador PDF:** Simulador financiero dinámico con pie %, cuotas, Tasa de Interés, VFG Crédito Inteligente e impresión limpia `@media print`.
+8. **F&I Financiamiento:** Módulo de gestión de solicitudes a entidades crediticias.
+9. **BDC & Recepción:** Captura rápida de prospectos y asignación a vendedores.
+10. **Seguridad & Roles:** Matriz interactiva RBAC y cambiador rápido de usuario para testing.
+11. **Onboarding Tour:** Tour interactivo guiado por cada rol usando `driver.js`.
+12. **Portal de Documentación (`DocsSection`):** Interfaz para consultar la documentación directamente desde la aplicación.
 
 ---
 
