@@ -41,3 +41,42 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+/* @media print for Professional PDF Generation */
+@media print {
+  body, html {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide all UI shell elements during print */
+  header, nav, sidebar, aside, button, .no-print, [data-tour], .fixed {
+    display: none !important;
+  }
+
+  /* Reset layout containers */
+  main, div, section {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Printable PDF Sheet Target */
+  .quote-pdf-sheet {
+    display: block !important;
+    width: 100% !important;
+    max-width: 800px !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+    page-break-inside: avoid;
+  }
+}

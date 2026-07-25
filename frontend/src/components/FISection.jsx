@@ -1,7 +1,7 @@
 import React from 'react';
 import { BadgePercent, Landmark, CheckCircle, Clock, FileCheck, RefreshCw, Send } from 'lucide-react';
 
-export default function FISection({ fiSolicitudes }) {
+export default function FISection({ fiSolicitudes, onOpenNewFISolicitudModal }) {
   const formatCLP = (val) => {
     return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(val || 0);
   };
@@ -10,7 +10,7 @@ export default function FISection({ fiSolicitudes }) {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex justify-between items-center" data-tour="fi-insurance-calc">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4" data-tour="fi-insurance-calc">
         <div>
           <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
             <BadgePercent className="w-6 h-6 text-emerald-400" /> Módulo F&I (Finanzas & Seguros)
@@ -19,6 +19,13 @@ export default function FISection({ fiSolicitudes }) {
             CU 6.1 & CU 6.2 - Línea de tiempo de crédito, comparativa de ofertas bancarias y reenvío a financieras.
           </p>
         </div>
+
+        <button
+          onClick={onOpenNewFISolicitudModal}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs shadow-lg shadow-emerald-600/30 transition-all hover:scale-105"
+        >
+          <Landmark className="w-4 h-4" /> + Nueva Solicitud F&I
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-tour="fi-pending-table">

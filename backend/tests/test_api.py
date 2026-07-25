@@ -112,3 +112,89 @@ def test_security_module_endpoints():
         headers={"Authorization": f"Bearer {vendedor_token}"}
     )
     assert vendedor_users_res.status_code == 403
+
+def test_full_persistence_flow():
+    # 1. Login as Admin
+    login_res = client.post(
+        "/api/auth/login",
+        json={"email": "admin@origen.cl", "password": "Admin123!"}
+    )
+    assert login_res.status_code == 200
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 2. Create vehicle
+    v_res = client.post(
+        "/api/vehicles/",
+        headers=headers,
+        json={
+            "patente": "AB123CD",
+            "marca": "Toyota",
+            "modelo": "RAV4",
+            "año": 2023,
+            "kilometraje": 15000,
+            "precio_compra_tasacion": 15000000,
+            "precio_venta_publico": 18990000,
+            "estado": "DISPONIBLE"
+        }
+    )
+    assert v_res.status_code == 201
+    vehicle_id = v_res.json()["id"]
+
+    # 3. Create customer and lead
+    c_res = client.post(
+        "/api/leads/customers",
+        headers=headers,
+        json={
+            "nombre_completo": "Esteban Quito",
+            "telefono": "+56912345678",
+            "email": "esteban@origen.cl"
+        }
+    )
+    assert c_res.status_code == 201
+    customer_id = c_res.json()["id"]
+
+    l_res = client.post(
+        "/api/leads/",
+        headers=headers,
+        json={
+            "id_cliente": customer_id,
+            "id_vehiculo_interes": vehicle_id,
+            "id_vendedor_asignado": login_res.json()["user"]["id"],
+            "monto_estimado": 18990000,
+            "estado_embudo": "NUEVO"
+        }
+    )
+    assert l_res.status_code == 201
+
+    # 4. Create BDC lead
+    bdc_res = client.post(
+        "/api/bdc/",
+        headers=headers,
+        json={
+            "nombre_prospecto": "Maria Gomez",
+            "telefono": "+56998765432",
+            "vehiculo_interes": "Toyota RAV4"
+        }
+    )
+    assert bdc_res.status_code == 201
+
+    # 5. Create F&I application
+    fi_res = client.post(
+        "/api/fi/",
+        headers=headers,
+        json={
+            "entidad_financiera": "Forum",
+            "monto_solicitado": 12000000,
+            "id_vehiculo": vehicle_id
+        }
+    )
+    assert fi_res.status_code == 201
+
+    # 6. Verify Dashboard Metrics
+    m_res = client.get("/api/dashboard/metrics", headers=headers)
+    assert m_res.status_code == 200
+    metrics = m_res.json()
+    assert metrics["total_vehiculos_stock"] == 1
+    assert metrics["total_leads_activos"] == 1
+

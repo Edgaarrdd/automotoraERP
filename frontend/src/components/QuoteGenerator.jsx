@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FileText, Calculator, ShieldCheck, Printer, CheckCircle, Car, MessageCircle, AlertTriangle } from 'lucide-react';
 
-export default function QuoteGenerator({ vehicles, currentUser }) {
+export default function QuoteGenerator({ vehicles, currentUser, onSubmitQuote }) {
   const [selectedVehicleId, setSelectedVehicleId] = useState(vehicles[0]?.id || '');
   const [customerName, setCustomerName] = useState('Juan Pablo Pérez');
   const [customerRut, setCustomerRut] = useState('16.482.193-K');
@@ -12,6 +12,7 @@ export default function QuoteGenerator({ vehicles, currentUser }) {
   const [interestRate, setInterestRate] = useState(1.45);
   const [includeInsurance, setIncludeInsurance] = useState(true);
   const [insuranceCost, setInsuranceCost] = useState(38000);
+  const [savedSuccess, setSavedSuccess] = useState(false);
 
   const selectedVehicle = vehicles.find((v) => v.id === selectedVehicleId) || vehicles[0];
   const vehiclePrice = selectedVehicle ? selectedVehicle.precio_venta_publico : 18990000;
@@ -46,11 +47,28 @@ export default function QuoteGenerator({ vehicles, currentUser }) {
 
   const cuotaTotal = Math.round(cuotaBase + (includeInsurance && financingType !== 'CONTADO' ? insuranceCost : 0));
 
+  const handleSaveQuote = async () => {
+    if (onSubmitQuote) {
+      await onSubmitQuote({
+        id_vehiculo: selectedVehicle?.id,
+        precio_vehiculo: vehiclePrice,
+        pie_monto: pieAmount,
+        cantidad_cuotas: installments,
+        tasa_interes: interestRate,
+        incluye_seguro: includeInsurance,
+        costo_seguro: insuranceCost
+      });
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
 
   const handleSendWhatsApp = () => {
+    handleSaveQuote();
     const text = encodeURIComponent(
       `Hola ${customerName}, adjunto la cotización de tu vehículo *${selectedVehicle?.marca} ${selectedVehicle?.modelo}* (${selectedVehicle?.patente}) en Automotora Las Condes.\n\n` +
       `• Precio Venta: ${formatCLP(vehiclePrice)}\n` +
@@ -76,6 +94,19 @@ export default function QuoteGenerator({ vehicles, currentUser }) {
         </div>
 
         <div className="flex items-center gap-2">
+          {savedSuccess && (
+            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1 bg-emerald-500/20 px-3 py-1.5 rounded-xl border border-emerald-500/30">
+              <CheckCircle className="w-4 h-4 text-emerald-400" /> Guardada en BD
+            </span>
+          )}
+
+          <button
+            onClick={handleSaveQuote}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-lg shadow-sky-600/30 transition-all hover:scale-105"
+          >
+            <FileText className="w-4 h-4" /> Guardar en BD
+          </button>
+
           <button
             onClick={handleSendWhatsApp}
             className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition-all hover:scale-105"
@@ -85,7 +116,7 @@ export default function QuoteGenerator({ vehicles, currentUser }) {
 
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-bold text-xs transition-all"
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 font-bold text-xs transition-all hover:scale-105"
           >
             <Printer className="w-4 h-4" /> Imprimir PDF
           </button>
@@ -198,6 +229,7 @@ export default function QuoteGenerator({ vehicles, currentUser }) {
                       <option value={24}>24 Meses</option>
                       <option value={36}>36 Meses</option>
                       <option value={48}>48 Meses</option>
+                      <option value={60}>60 Meses</option>
                     </select>
                   </div>
 
@@ -218,35 +250,41 @@ export default function QuoteGenerator({ vehicles, currentUser }) {
         </div>
 
         {/* Live Printable PDF View Right */}
-        <div className="lg:col-span-7 bg-white text-slate-900 p-8 rounded-3xl shadow-2xl space-y-6 print:m-0 print:shadow-none">
-          {/* Header */}
+        <div className="lg:col-span-7 bg-white text-slate-900 p-8 rounded-3xl shadow-2xl space-y-6 quote-pdf-sheet">
+          {/* Corporate Header */}
           <div className="flex justify-between items-start border-b border-slate-200 pb-6">
             <div>
-              <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">COTIZACIÓN DE VEHÍCULO</h1>
-              <p className="text-xs text-slate-500 font-semibold mt-1">Automotora Las Condes SpA • Av. Apoquindo 4500</p>
+              <div className="text-xl font-black text-sky-600 tracking-tight flex items-center gap-2">
+                AUTOMOTORA ORIGEN SpA
+              </div>
+              <p className="text-xs text-slate-500 font-semibold mt-1">Concesionario Oficial • Av. Apoquindo 4500, Las Condes</p>
+              <p className="text-[11px] text-slate-400">Santiago, Chile • Mesa Central: +56 2 2987 6543</p>
             </div>
             <div className="text-right">
-              <span className="text-xs font-mono font-bold bg-slate-100 text-slate-700 px-3 py-1 rounded-lg border border-slate-300">
-                COT-2026-0891
+              <span className="text-xs font-mono font-extrabold bg-sky-50 text-sky-700 px-3 py-1 rounded-lg border border-sky-200">
+                COT-2026-{selectedVehicle?.patente || '0891'}
               </span>
-              <p className="text-[11px] text-slate-400 mt-1">Fecha: 21 de Julio, 2026</p>
+              <p className="text-[11px] text-slate-400 mt-1 font-semibold">Fecha Emisión: 25 de Julio, 2026</p>
+              <p className="text-[10px] text-slate-400 italic">Válida por 15 días</p>
             </div>
           </div>
 
-          {/* Client & Vehicle */}
+          {/* Client & Vehicle Technical Card */}
           <div className="grid grid-cols-2 gap-4 text-xs">
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-slate-400">Cliente</span>
-              <div className="font-bold text-slate-800">{customerName}</div>
-              <div className="text-slate-600">RUT: {customerRut}</div>
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Datos del Cliente</span>
+              <div className="font-extrabold text-slate-900 text-sm">{customerName}</div>
+              <div className="text-slate-600 font-mono">RUT: {customerRut}</div>
+              <div className="text-slate-600">Tel: {customerPhone}</div>
             </div>
 
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-slate-400">Vehículo</span>
-              <div className="font-bold text-slate-800">
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Especificaciones Vehículo</span>
+              <div className="font-extrabold text-slate-900 text-sm">
                 {selectedVehicle?.marca} {selectedVehicle?.modelo} ({selectedVehicle?.año})
               </div>
-              <div className="text-slate-600 font-mono">Patente: {selectedVehicle?.patente}</div>
+              <div className="text-slate-600 font-mono">Patente: {selectedVehicle?.patente || 'N/A'} • VIN: {selectedVehicle?.vin || 'JN1TANT32U0'}</div>
+              <div className="text-slate-600">Km: {selectedVehicle?.kilometraje?.toLocaleString('es-CL') || '0'} km • Transmisión: {selectedVehicle?.transmision || 'AUTOMATICA'}</div>
             </div>
           </div>
 
@@ -255,14 +293,14 @@ export default function QuoteGenerator({ vehicles, currentUser }) {
             <table className="w-full text-left">
               <thead className="bg-slate-100 font-bold text-slate-700 border-b border-slate-200">
                 <tr>
-                  <th className="p-3">CONCEPTO ({financingType.replace('_', ' ')})</th>
-                  <th className="p-3 text-right">MONTO</th>
+                  <th className="p-3 uppercase text-[11px] tracking-wider">CONCEPTO FINANCIAL ({financingType.replace('_', ' ')})</th>
+                  <th className="p-3 text-right uppercase text-[11px] tracking-wider">MONTO ($CLP)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 text-slate-800 font-medium">
                 <tr>
                   <td className="p-3">Precio Venta Público del Vehículo</td>
-                  <td className="p-3 text-right font-mono font-bold">{formatCLP(vehiclePrice)}</td>
+                  <td className="p-3 text-right font-mono font-extrabold">{formatCLP(vehiclePrice)}</td>
                 </tr>
                 {financingType !== 'CONTADO' && (
                   <tr>
@@ -276,26 +314,45 @@ export default function QuoteGenerator({ vehicles, currentUser }) {
                     <td className="p-3 text-right font-mono text-indigo-600 font-bold">-{formatCLP(vfgMonto)}</td>
                   </tr>
                 )}
-                <tr className="bg-slate-50 font-bold">
-                  <td className="p-3">(=) Monto a Financiar en Cuotas</td>
+                <tr className="bg-slate-50 font-extrabold">
+                  <td className="p-3 text-slate-900">(=) Monto Neto a Financiar en Cuotas</td>
                   <td className="p-3 text-right font-mono text-slate-900">{formatCLP(montoFinanciar)}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* Highlight */}
-          <div className="p-6 rounded-2xl bg-gradient-to-r from-sky-900 to-indigo-900 text-white flex items-center justify-between shadow-xl">
+          {/* Highlight Box */}
+          <div className="p-6 rounded-2xl bg-slate-900 text-white flex items-center justify-between shadow-xl">
             <div>
-              <span className="text-xs uppercase font-extrabold text-sky-300">
-                {financingType === 'CONTADO' ? 'Pago Total al Contado' : 'Cuota Mensual Estimada'}
+              <span className="text-xs uppercase font-extrabold text-sky-400 tracking-wider">
+                {financingType === 'CONTADO' ? 'Valor Total al Contado' : 'Cuota Mensual Estimada'}
               </span>
-              <div className="text-xs text-sky-100 mt-0.5">
-                {financingType === 'CONTADO' ? 'Sin cuotas financieras' : `${installments} Cuotas fijas • Tasa ${interestRate}%`}
+              <div className="text-xs text-slate-300 mt-0.5 font-medium">
+                {financingType === 'CONTADO' ? 'Sin intereses financieros' : `${installments} Cuotas Fijas • Tasa ${interestRate}% Mensual`}
               </div>
             </div>
             <div className="text-3xl font-extrabold text-white font-mono">
               {financingType === 'CONTADO' ? formatCLP(vehiclePrice) : `${formatCLP(cuotaTotal)} / mes`}
+            </div>
+          </div>
+
+          {/* Disclaimer & Signatures */}
+          <div className="space-y-6 pt-4 border-t border-slate-200">
+            <p className="text-[10px] text-slate-500 text-center leading-relaxed italic">
+              Esta cotización constituye una estimación referencial y no representa una obligación de venta ni factura oficial.
+              La aprobación final del crédito está sujeta a la evaluación comercial de riesgo del departamento de F&I.
+            </p>
+
+            <div className="grid grid-cols-2 gap-8 text-center text-xs text-slate-700 pt-6">
+              <div className="border-t border-slate-400 pt-2 font-bold">
+                Firma y Timbre Asesor Comercial<br />
+                <span className="text-[10px] text-slate-500 font-normal">{currentUser?.nombre || 'Ejecutivo de Ventas'}</span>
+              </div>
+              <div className="border-t border-slate-400 pt-2 font-bold">
+                Firma y RUT del Cliente<br />
+                <span className="text-[10px] text-slate-500 font-normal">{customerName}</span>
+              </div>
             </div>
           </div>
         </div>

@@ -5,48 +5,90 @@ import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
 import VehicleModal from './components/VehicleModal';
 import NewVehicleModal from './components/NewVehicleModal';
+import NewLeadModal from './components/NewLeadModal';
+import NewFISolicitudModal from './components/NewFISolicitudModal';
 import PipelineKanban from './components/PipelineKanban';
 import QuoteGenerator from './components/QuoteGenerator';
 import FISection from './components/FISection';
 import BDCSection from './components/BDCSection';
 import SecuritySection from './components/SecuritySection';
 import OnboardingTour from './components/OnboardingTour';
-import { apiFetch, getCurrentUserData, setCurrentUserData } from './services/api';
+import { apiFetch, getCurrentUserData, setCurrentUserData, setAuthToken } from './services/api';
 
 const DEFAULT_USERS = {
-  'admin@origen.cl': { id: 'u1', nombre: 'Carlos Mendoza (Admin)', email: 'admin@origen.cl', rol: 'ADMIN', tenant_id: 'tenant_origen' },
-  'gerente@origen.cl': { id: 'u2', nombre: 'Roberto Gómez (Gerente)', email: 'gerente@origen.cl', rol: 'GERENTE', tenant_id: 'tenant_origen' },
-  'vendedor1@origen.cl': { id: 'u3', nombre: 'Matías Silva (Asesor)', email: 'vendedor1@origen.cl', rol: 'VENDEDOR', tenant_id: 'tenant_origen' },
-  'vendedor2@origen.cl': { id: 'u4', nombre: 'Camila Torres (Asesora)', email: 'vendedor2@origen.cl', rol: 'VENDEDOR', tenant_id: 'tenant_origen' },
-  'fi@origen.cl': { id: 'u5', nombre: 'Felipe Reyes (Ejecutivo F&I)', email: 'fi@origen.cl', rol: 'F_AND_I', tenant_id: 'tenant_origen' },
-  'bdc@origen.cl': { id: 'u6', nombre: 'Valentina Morales (Agente BDC)', email: 'bdc@origen.cl', rol: 'BDC', tenant_id: 'tenant_origen' },
-  'marketing@origen.cl': { id: 'u7', nombre: 'Gonzalo Paz (Marketing)', email: 'marketing@origen.cl', rol: 'MARKETING', tenant_id: 'tenant_origen' },
-  'taller@origen.cl': { id: 'u8', nombre: 'Hugo Navarro (Jefe Taller)', email: 'taller@origen.cl', rol: 'TALLER', tenant_id: 'tenant_origen' }
+  'admin@origen.cl': { id: 'u1', nombre: 'Carlos Mendoza (Admin)', email: 'admin@origen.cl', rol: 'ADMIN', tenant_id: 'tenant_origen', password: 'Admin123!' },
+  'gerente@origen.cl': { id: 'u2', nombre: 'Roberto Gómez (Gerente)', email: 'gerente@origen.cl', rol: 'GERENTE', tenant_id: 'tenant_origen', password: 'Gerente123!' },
+  'vendedor1@origen.cl': { id: 'u3', nombre: 'Matías Silva (Asesor)', email: 'vendedor1@origen.cl', rol: 'VENDEDOR', tenant_id: 'tenant_origen', password: 'Vendedor123!' },
+  'vendedor2@origen.cl': { id: 'u4', nombre: 'Camila Torres (Asesora)', email: 'vendedor2@origen.cl', rol: 'VENDEDOR', tenant_id: 'tenant_origen', password: 'Vendedor123!' },
+  'fi@origen.cl': { id: 'u5', nombre: 'Felipe Reyes (Ejecutivo F&I)', email: 'fi@origen.cl', rol: 'F_AND_I', tenant_id: 'tenant_origen', password: 'Fi123!' },
+  'bdc@origen.cl': { id: 'u6', nombre: 'Valentina Morales (Agente BDC)', email: 'bdc@origen.cl', rol: 'BDC', tenant_id: 'tenant_origen', password: 'Bdc123!' },
+  'marketing@origen.cl': { id: 'u7', nombre: 'Gonzalo Paz (Marketing)', email: 'marketing@origen.cl', rol: 'MARKETING', tenant_id: 'tenant_origen', password: 'Admin123!' },
+  'taller@origen.cl': { id: 'u8', nombre: 'Hugo Navarro (Jefe Taller)', email: 'taller@origen.cl', rol: 'TALLER', tenant_id: 'tenant_origen', password: 'Admin123!' }
 };
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => getCurrentUserData() || DEFAULT_USERS['admin@origen.cl']);
-  const [activeTab, setActiveTab] = useState('security'); // Pestaña principal al iniciar Alpha 0.0.1
+  const [activeTab, setActiveTab] = useState('security');
   const [activeSubTab, setActiveSubTab] = useState('tester');
   const [isTourOpen, setIsTourOpen] = useState(false);
 
-  // Arreglos vacíos iniciales limpios sin datos mock para Alpha 0.0.1
+  // States initialized cleanly for Alpha 0.0.1 / Beta 0.1.0
   const [vehicles, setVehicles] = useState([]);
   const [leads, setLeads] = useState([]);
   const [fiSolicitudes, setFiSolicitudes] = useState([]);
   const [bdcLeads, setBdcLeads] = useState([]);
+  const [metrics, setMetrics] = useState(null);
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [isNewVehicleModalOpen, setIsNewVehicleModalOpen] = useState(false);
+  const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
+  const [isNewFISolicitudModalOpen, setIsNewFISolicitudModalOpen] = useState(false);
 
-  // Intentar cargar datos reales desde el backend si existen
+  // Function to ensure active user JWT authentication token with backend API
+  const ensureUserToken = async (userObj) => {
+    const pwd = userObj.password || 'Admin123!';
+    try {
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: userObj.email, password: pwd })
+      });
+      if (data && data.access_token) {
+        setAuthToken(data.access_token);
+        return true;
+      }
+    } catch (e) {
+      console.warn('Backend login token fetch warning:', e.message);
+    }
+    return false;
+  };
+
+  // Load all entities from backend API
+  const refreshAllData = async () => {
+    try {
+      const [vData, lData, fiData, bdcData, mData] = await Promise.allSettled([
+        apiFetch('/vehicles/'),
+        apiFetch('/leads/'),
+        apiFetch('/fi/'),
+        apiFetch('/bdc/'),
+        apiFetch('/dashboard/metrics')
+      ]);
+
+      if (vData.status === 'fulfilled' && Array.isArray(vData.value)) setVehicles(vData.value);
+      if (lData.status === 'fulfilled' && Array.isArray(lData.value)) setLeads(lData.value);
+      if (fiData.status === 'fulfilled' && Array.isArray(fiData.value)) setFiSolicitudes(fiData.value);
+      if (bdcData.status === 'fulfilled' && Array.isArray(bdcData.value)) setBdcLeads(bdcData.value);
+      if (mData.status === 'fulfilled' && mData.value) setMetrics(mData.value);
+    } catch (err) {
+      console.warn('Error refreshing data from API:', err.message);
+    }
+  };
+
+  // Authenticate and load data on user/role change
   useEffect(() => {
-    apiFetch('/vehicles/')
-      .then((data) => {
-        if (data && Array.isArray(data)) setVehicles(data);
-      })
-      .catch(() => {});
-  }, []);
+    ensureUserToken(currentUser).then(() => {
+      refreshAllData();
+    });
+  }, [currentUser?.email]);
 
   // Auto-launch tour on initial load or role switch if not completed
   useEffect(() => {
@@ -68,10 +110,12 @@ export default function App() {
     setIsTourOpen(false);
   };
 
-  const handleSwitchUser = (email) => {
+  const handleSwitchUser = async (email) => {
     const u = DEFAULT_USERS[email] || DEFAULT_USERS['admin@origen.cl'];
     setCurrentUser(u);
     setCurrentUserData(u);
+    await ensureUserToken(u);
+    refreshAllData();
     const roleKey = `onboarding_completed_${u.rol}`;
     if (!localStorage.getItem(roleKey)) {
       setTimeout(() => setIsTourOpen(true), 400);
@@ -84,23 +128,107 @@ export default function App() {
     setCurrentUser(DEFAULT_USERS['admin@origen.cl']);
   };
 
-  const handleUpdateVehicleStatus = (vehicleId, newStatus) => {
+  // --- Handlers for API Persisted Actions ---
+
+  const handleCreateVehicle = async (vehicleData) => {
+    try {
+      const created = await apiFetch('/vehicles/', {
+        method: 'POST',
+        body: JSON.stringify(vehicleData)
+      });
+      if (created) {
+        setVehicles((prev) => [created, ...prev]);
+      }
+    } catch (e) {
+      // Local fallback
+      const newVehicle = {
+        ...vehicleData,
+        id: `v_${Date.now()}`,
+        urls_fotos: ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800']
+      };
+      setVehicles((prev) => [newVehicle, ...prev]);
+    }
+    setIsNewVehicleModalOpen(false);
+    refreshAllData();
+  };
+
+  const handleUpdateVehicleStatus = async (vehicleId, newStatus) => {
+    try {
+      await apiFetch(`/vehicles/${vehicleId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ estado: newStatus })
+      });
+    } catch (e) {
+      console.warn('Fallback status update local:', e.message);
+    }
     setVehicles((prev) =>
       prev.map((v) => (v.id === vehicleId ? { ...v, estado: newStatus } : v))
     );
+    refreshAllData();
   };
 
-  const handleCreateVehicle = (vehicleData) => {
-    const newVehicle = {
-      ...vehicleData,
-      id: `v_${Date.now()}`,
-      urls_fotos: ['https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800']
-    };
-    setVehicles([newVehicle, ...vehicles]);
-    setIsNewVehicleModalOpen(false);
+  const handleCreateLead = async (leadData) => {
+    try {
+      // 1. Create or ensure customer record
+      let customerId = null;
+      try {
+        const custRes = await apiFetch('/leads/customers', {
+          method: 'POST',
+          body: JSON.stringify({
+            nombre_completo: leadData.nombre_completo,
+            telefono: leadData.telefono,
+            email: leadData.email,
+            tipo: 'COMPRADOR',
+            origen: 'KANBAN_DIRECT'
+          })
+        });
+        if (custRes && custRes.id) customerId = custRes.id;
+      } catch (custErr) {
+        console.warn('Customer auto-create warning:', custErr.message);
+      }
+
+      // 2. Create lead opportunity
+      const leadPayload = {
+        id_cliente: customerId,
+        id_vehiculo_interes: leadData.id_vehiculo_interes || null,
+        id_vendedor_asignado: currentUser.id,
+        estado_embudo: 'NUEVO',
+        score_lead: leadData.score_lead || 'CALIENTE',
+        monto_estimado: leadData.monto_estimado || 0
+      };
+
+      const created = await apiFetch('/leads/', {
+        method: 'POST',
+        body: JSON.stringify(leadPayload)
+      });
+
+      if (created) {
+        setLeads((prev) => [created, ...prev]);
+      }
+    } catch (e) {
+      // Fallback
+      const newLead = {
+        id: `l_${Date.now()}`,
+        customer: { nombre_completo: leadData.nombre_completo, telefono: leadData.telefono },
+        estado_embudo: 'NUEVO',
+        score_lead: leadData.score_lead || 'CALIENTE',
+        monto_estimado: leadData.monto_estimado
+      };
+      setLeads((prev) => [newLead, ...prev]);
+    }
+    setIsNewLeadModalOpen(false);
+    refreshAllData();
   };
 
-  const handleUpdateLeadStage = (leadId, newStage, lossReason = '') => {
+  const handleUpdateLeadStage = async (leadId, newStage, lossReason = '') => {
+    try {
+      await apiFetch(`/leads/${leadId}/stage`, {
+        method: 'PATCH',
+        body: JSON.stringify({ estado_embudo: newStage, motivo_perdida: lossReason })
+      });
+    } catch (e) {
+      console.warn('Fallback lead stage update:', e.message);
+    }
     setLeads((prev) =>
       prev.map((l) =>
         l.id === leadId
@@ -108,14 +236,61 @@ export default function App() {
           : l
       )
     );
+    refreshAllData();
   };
 
-  const handleCreateBDCLead = (bdcData) => {
-    const newBDC = { ...bdcData, id: `b_${Date.now()}` };
-    setBdcLeads([newBDC, ...bdcLeads]);
+  const handleCreateBDCLead = async (bdcData) => {
+    try {
+      const created = await apiFetch('/bdc/', {
+        method: 'POST',
+        body: JSON.stringify(bdcData)
+      });
+      if (created) {
+        setBdcLeads((prev) => [created, ...prev]);
+      }
+    } catch (e) {
+      const newBDC = { ...bdcData, id: `b_${Date.now()}` };
+      setBdcLeads((prev) => [newBDC, ...prev]);
+    }
+    refreshAllData();
   };
 
-  // Cálculo dinámico de métricas reales
+  const handleCreateFISolicitud = async (fiData) => {
+    try {
+      const created = await apiFetch('/fi/', {
+        method: 'POST',
+        body: JSON.stringify({
+          entidad_financiera: fiData.entidad_financiera,
+          monto_solicitado: fiData.monto_solicitado,
+          pie_porcentaje: fiData.pie_porcentaje,
+          id_vehiculo: fiData.id_vehiculo || null,
+          observaciones: fiData.observaciones
+        })
+      });
+      if (created) {
+        setFiSolicitudes((prev) => [created, ...prev]);
+      }
+    } catch (e) {
+      const newSol = { ...fiData, id: `f_${Date.now()}`, estado: 'EN_ESTUDIO' };
+      setFiSolicitudes((prev) => [newSol, ...prev]);
+    }
+    setIsNewFISolicitudModalOpen(false);
+    refreshAllData();
+  };
+
+  const handleCreateQuote = async (quoteData) => {
+    try {
+      await apiFetch('/quotes/', {
+        method: 'POST',
+        body: JSON.stringify(quoteData)
+      });
+    } catch (e) {
+      console.warn('Quote creation API fallback:', e.message);
+    }
+    refreshAllData();
+  };
+
+  // Cálculo dinámico de métricas para el Dashboard
   const totalStock = vehicles.length;
   const disponibles = vehicles.filter((v) => v.estado === 'DISPONIBLE').length;
   const reservados = vehicles.filter((v) => v.estado === 'RESERVADO').length;
@@ -127,7 +302,7 @@ export default function App() {
     .filter((v) => v.estado === 'VENDIDO')
     .reduce((sum, item) => sum + (item.precio_venta_publico || 0), 0);
 
-  const metrics = {
+  const calculatedMetrics = metrics || {
     total_vehiculos_stock: totalStock,
     vehiculos_disponibles: disponibles,
     vehiculos_reservados: reservados,
@@ -176,7 +351,7 @@ export default function App() {
 
           {activeTab === 'dashboard' && (
             <Dashboard
-              metrics={metrics}
+              metrics={calculatedMetrics}
               vehicles={vehicles}
               leads={leads}
               onQuickAction={handleQuickAction}
@@ -197,16 +372,25 @@ export default function App() {
             <PipelineKanban
               leads={leads}
               onUpdateStage={handleUpdateLeadStage}
-              onOpenNewLeadModal={() => {}}
+              onOpenNewLeadModal={() => setIsNewLeadModalOpen(true)}
               currentUser={currentUser}
             />
           )}
 
           {activeTab === 'quotes' && (
-            <QuoteGenerator vehicles={vehicles} currentUser={currentUser} />
+            <QuoteGenerator
+              vehicles={vehicles}
+              currentUser={currentUser}
+              onSubmitQuote={handleCreateQuote}
+            />
           )}
 
-          {activeTab === 'fi' && <FISection fiSolicitudes={fiSolicitudes} />}
+          {activeTab === 'fi' && (
+            <FISection
+              fiSolicitudes={fiSolicitudes}
+              onOpenNewFISolicitudModal={() => setIsNewFISolicitudModalOpen(true)}
+            />
+          )}
 
           {activeTab === 'bdc' && (
             <BDCSection bdcLeads={bdcLeads} onSubmitBDC={handleCreateBDCLead} />
@@ -228,6 +412,22 @@ export default function App() {
         <NewVehicleModal
           onClose={() => setIsNewVehicleModalOpen(false)}
           onSubmit={handleCreateVehicle}
+        />
+      )}
+
+      {isNewLeadModalOpen && (
+        <NewLeadModal
+          vehicles={vehicles}
+          onClose={() => setIsNewLeadModalOpen(false)}
+          onSubmit={handleCreateLead}
+        />
+      )}
+
+      {isNewFISolicitudModalOpen && (
+        <NewFISolicitudModal
+          vehicles={vehicles}
+          onClose={() => setIsNewFISolicitudModalOpen(false)}
+          onSubmit={handleCreateFISolicitud}
         />
       )}
 

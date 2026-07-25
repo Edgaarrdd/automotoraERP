@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Any
 from datetime import datetime
-from .models import RoleEnum, CustomerTypeEnum, VehicleStatusEnum, FuelTypeEnum, TransmissionEnum, PipelineStageEnum
+from .models import RoleEnum, CustomerTypeEnum, VehicleStatusEnum, FuelTypeEnum, TransmissionEnum, PipelineStageEnum, LeadScoreEnum
 
 # Auth Schemas
 class Token(BaseModel):
@@ -104,10 +104,11 @@ class VehicleOut(VehicleBase):
 
 # Lead Schemas
 class LeadBase(BaseModel):
-    id_cliente: str
+    id_cliente: Optional[str] = None
     id_vehiculo_interes: Optional[str] = None
-    id_vendedor_asignado: str
+    id_vendedor_asignado: Optional[str] = None
     estado_embudo: PipelineStageEnum = PipelineStageEnum.NUEVO
+    score_lead: LeadScoreEnum = LeadScoreEnum.TIBIO
     monto_estimado: float = 0.0
 
 class LeadCreate(LeadBase):
@@ -132,8 +133,8 @@ class LeadOut(LeadBase):
 # Quote Schemas
 class QuoteCreate(BaseModel):
     id_lead: Optional[str] = None
-    id_cliente: str
-    id_vehiculo: str
+    id_cliente: Optional[str] = None
+    id_vehiculo: Optional[str] = None
     precio_vehiculo: float
     pie_monto: float = 0.0
     cantidad_cuotas: int = 36
@@ -145,8 +146,8 @@ class QuoteOut(BaseModel):
     id: str
     tenant_id: Optional[str] = None
     id_lead: Optional[str] = None
-    id_cliente: str
-    id_vehiculo: str
+    id_cliente: Optional[str] = None
+    id_vehiculo: Optional[str] = None
     id_vendedor: str
     precio_vehiculo: float
     pie_monto: float
@@ -166,8 +167,8 @@ class QuoteOut(BaseModel):
 
 # F&I Schemas
 class FISolicitudCreate(BaseModel):
-    id_cliente: str
-    id_vehiculo: str
+    id_cliente: Optional[str] = None
+    id_vehiculo: Optional[str] = None
     id_cotizacion: Optional[str] = None
     entidad_financiera: str
     monto_solicitado: float

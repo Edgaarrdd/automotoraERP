@@ -34,12 +34,15 @@ def create_lead(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles([RoleEnum.ADMIN, RoleEnum.GERENTE, RoleEnum.VENDEDOR, RoleEnum.BDC]))
 ):
-    customer = db.query(Customer).filter(Customer.id == lead_in.id_cliente).first()
-    if not customer:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    if lead_in.id_cliente:
+        customer = db.query(Customer).filter(Customer.id == lead_in.id_cliente).first()
+        if not customer:
+            lead_in.id_cliente = None
 
     data = lead_in.dict()
     data["tenant_id"] = current_user.tenant_id
+    if not data.get("id_vendedor_asignado"):
+        data["id_vendedor_asignado"] = current_user.id
 
     db_lead = LeadOpportunity(**data)
     db.add(db_lead)

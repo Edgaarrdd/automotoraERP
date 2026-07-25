@@ -150,7 +150,7 @@ class LeadOpportunity(Base):
 
     id = Column(String, primary_key=True, default=generate_uuid)
     tenant_id = Column(String, ForeignKey("tenants.id"), nullable=True)
-    id_cliente = Column(String, ForeignKey("clientes.id"), nullable=False)
+    id_cliente = Column(String, ForeignKey("clientes.id"), nullable=True)
     id_vehiculo_interes = Column(String, ForeignKey("vehiculos.id"), nullable=True)
     id_vendedor_asignado = Column(String, ForeignKey("usuarios.id"), nullable=False)
     estado_embudo = Column(SQLEnum(PipelineStageEnum), default=PipelineStageEnum.NUEVO)
@@ -173,8 +173,8 @@ class Quote(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     tenant_id = Column(String, ForeignKey("tenants.id"), nullable=True)
     id_lead = Column(String, ForeignKey("leads_oportunidades.id"), nullable=True)
-    id_cliente = Column(String, ForeignKey("clientes.id"), nullable=False)
-    id_vehiculo = Column(String, ForeignKey("vehiculos.id"), nullable=False)
+    id_cliente = Column(String, ForeignKey("clientes.id"), nullable=True)
+    id_vehiculo = Column(String, ForeignKey("vehiculos.id"), nullable=True)
     id_vendedor = Column(String, ForeignKey("usuarios.id"), nullable=False)
     tipo_financiamiento = Column(String, default="CREDITO_CONVENCIONAL") # CONTADO, CREDITO_INTELIGENTE, CREDITO_CONVENCIONAL
     precio_vehiculo = Column(Float, nullable=False)
@@ -197,8 +197,8 @@ class FISolicitud(Base):
 
     id = Column(String, primary_key=True, default=generate_uuid)
     tenant_id = Column(String, ForeignKey("tenants.id"), nullable=True)
-    id_cliente = Column(String, ForeignKey("clientes.id"), nullable=False)
-    id_vehiculo = Column(String, ForeignKey("vehiculos.id"), nullable=False)
+    id_cliente = Column(String, ForeignKey("clientes.id"), nullable=True)
+    id_vehiculo = Column(String, ForeignKey("vehiculos.id"), nullable=True)
     id_cotizacion = Column(String, ForeignKey("cotizaciones.id"), nullable=True)
     id_asesor_fi = Column(String, ForeignKey("usuarios.id"), nullable=True)
     entidad_financiera = Column(String, nullable=False)
