@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional, List, Any
 from datetime import datetime
 from .models import RoleEnum, CustomerTypeEnum, VehicleStatusEnum, FuelTypeEnum, TransmissionEnum, PipelineStageEnum, LeadScoreEnum, AppointmentTypeEnum, AppointmentStatusEnum
@@ -34,8 +34,7 @@ class UserOut(UserBase):
     activo: bool
     fecha_creacion: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Customer Schemas
 class CustomerBase(BaseModel):
@@ -59,8 +58,7 @@ class CustomerOut(CustomerBase):
     fecha_captacion: datetime
     activo: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Vehicle Schemas
 class VehicleBase(BaseModel):
@@ -109,8 +107,7 @@ class VehicleOut(VehicleBase):
     fecha_venta: Optional[datetime] = None
     id_vendedor_vendio: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # CMS & Public Storefront Schemas
 class TenantCMSUpdate(BaseModel):
@@ -191,8 +188,7 @@ class LeadOut(LeadBase):
     customer: Optional[CustomerOut] = None
     vehicle: Optional[VehicleOut] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Quote Schemas
 class QuoteCreate(BaseModel):
@@ -226,8 +222,7 @@ class QuoteOut(BaseModel):
     customer: Optional[CustomerOut] = None
     vehicle: Optional[VehicleOut] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # F&I Schemas
 class FISolicitudCreate(BaseModel):
@@ -246,8 +241,7 @@ class FISolicitudOut(FISolicitudCreate):
     estado: str
     fecha_solicitud: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # BDC Schemas
 class BDCLeadCreate(BaseModel):
@@ -265,8 +259,7 @@ class BDCLeadOut(BDCLeadCreate):
     estado: str
     fecha_recepcion: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Dashboard Metrics Schema
 class DashboardMetrics(BaseModel):
@@ -303,5 +296,4 @@ class AppointmentOut(AppointmentBase):
     estado: AppointmentStatusEnum
     fecha_creacion: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

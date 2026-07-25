@@ -15,7 +15,7 @@
   "topbarLinks": [
     {
       "name": "Demo en Vivo",
-      "url": "http://localhost:5173"
+      "url": "http://localhost:3000"
     }
   ],
   "topbarCta": {
@@ -28,13 +28,21 @@
       "pages": [
         "docs/introduction",
         "docs/quickstart",
-        "docs/security"
+        "docs/docker-deployment"
       ]
     },
     {
-      "group": "Arquitectura & DB",
+      "group": "Guías Operativas y Casos de Uso",
+      "pages": [
+        "docs/use-cases",
+        "docs/onboarding-roles"
+      ]
+    },
+    {
+      "group": "Arquitectura & Seguridad",
       "pages": [
         "docs/architecture",
+        "docs/security",
         "docs/rbac-matrix",
         "docs/database-schema"
       ]
@@ -44,11 +52,12 @@
       "pages": [
         "docs/inventory-decoding",
         "docs/sales-kanban",
-        "docs/cms-storefront",
         "docs/quote-pdf-generator",
+        "docs/fi-and-bdc",
         "docs/calendar-test-drives",
         "docs/consignments-portal",
-        "docs/commissions-payroll"
+        "docs/commissions-payroll",
+        "docs/cms-storefront"
       ]
     },
     {
@@ -56,11 +65,13 @@
       "pages": [
         "docs/api-overview",
         "docs/api-vehicles",
-        "docs/api-public-storefront",
         "docs/api-quotes",
         "docs/api-appointments",
         "docs/api-consignments",
-        "docs/api-commissions"
+        "docs/api-commissions",
+        "docs/api-fi-bdc",
+        "docs/api-security",
+        "docs/api-public-storefront"
       ]
     }
   ]

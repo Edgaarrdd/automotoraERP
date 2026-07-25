@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from typing import List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from ..database import get_db
 from ..models import Quote, Vehicle, Customer, User, RoleEnum
 from ..schemas import QuoteCreate, QuoteOut
@@ -56,7 +56,7 @@ def create_quote(
         incluye_seguro=quote_in.incluye_seguro,
         costo_seguro=quote_in.costo_seguro,
         estado="EMITIDA",
-        fecha_expiracion=datetime.utcnow() + timedelta(days=15)
+        fecha_expiracion=datetime.now(timezone.utc) + timedelta(days=15)
     )
 
     db.add(db_quote)

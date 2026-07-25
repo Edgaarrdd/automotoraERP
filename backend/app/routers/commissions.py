@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from ..database import get_db
 from ..models import User, Vehicle, Quote, FISolicitud, RoleEnum
 from ..auth import get_current_user, require_roles
@@ -60,7 +60,7 @@ def get_commissions_summary(
             "bono_fi_monto": bono_fi_monto,
             "total_comision_pagar": total_comision_pagar,
             "estado_liquidacion": "PENDIENTE_REVISION" if cant_vendidos > 0 else "SIN_VENTAS",
-            "fecha_calculo": datetime.utcnow()
+            "fecha_calculo": datetime.now(timezone.utc)
         })
 
     return summary_list
@@ -81,5 +81,5 @@ def update_commission_status(
         "nombre": seller.nombre,
         "estado_liquidacion": estado_nuevo,
         "actualizado_por": current_user.nombre,
-        "fecha_actualizacion": datetime.utcnow()
+        "fecha_actualizacion": datetime.now(timezone.utc)
     }

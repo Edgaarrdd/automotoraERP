@@ -45,3 +45,6 @@ frontend/build/
 Thumbs.db
 *.swp
 *.tmp
+
+# Docker
+.env.docker

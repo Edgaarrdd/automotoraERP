@@ -1,3 +1,6 @@
+import os
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
@@ -6,14 +9,22 @@ from .routers import auth, vehicles, leads, quotes, dashboard, fi, bdc, security
 
 Base.metadata.create_all(bind=engine)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    seed_database()
+    yield
+
 app = FastAPI(
     title="CRM Automotora ERP API",
     description="API REST centralizada para gestión de inventario, pipeline de ventas, cotizaciones y financiamiento para automotoras.",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
+
 # CORS Middleware setup
-origins = [
+cors_env = os.getenv("CORS_ORIGINS", "")
+origins = [o.strip() for o in cors_env.split(",") if o.strip()] if cors_env else [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:3000",
@@ -43,9 +54,6 @@ app.include_router(commissions.router)
 app.include_router(public.router)
 app.include_router(cms.router)
 
-@app.on_event("startup")
-def startup_event():
-    seed_database()
 
 @app.get("/")
 def root():

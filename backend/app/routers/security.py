@@ -1,6 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -46,8 +46,7 @@ class SecurityUserOut(BaseModel):
     activo: bool
     telefono: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Matriz de permisos del sistema por rol para simulación y pruebas
 ROLE_PERMISSIONS = {

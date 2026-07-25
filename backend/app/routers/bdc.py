@@ -21,7 +21,7 @@ def create_bdc_lead(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles([RoleEnum.ADMIN, RoleEnum.GERENTE, RoleEnum.BDC, RoleEnum.VENDEDOR]))
 ):
-    data = bdc_in.dict()
+    data = bdc_in.model_dump()
     data["tenant_id"] = current_user.tenant_id
 
     db_bdc = BDCLead(**data)

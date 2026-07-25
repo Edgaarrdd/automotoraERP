@@ -39,7 +39,7 @@ def create_lead(
         if not customer:
             lead_in.id_cliente = None
 
-    data = lead_in.dict()
+    data = lead_in.model_dump()
     data["tenant_id"] = current_user.tenant_id
     if not data.get("id_vendedor_asignado"):
         data["id_vendedor_asignado"] = current_user.id
@@ -97,7 +97,7 @@ def create_customer(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    data = customer_in.dict()
+    data = customer_in.model_dump()
     data["tenant_id"] = current_user.tenant_id
     if not data.get("id_vendedor_asignado"):
         data["id_vendedor_asignado"] = current_user.id

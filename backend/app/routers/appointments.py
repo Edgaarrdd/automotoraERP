@@ -33,7 +33,7 @@ def create_appointment(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    data = app_in.dict()
+    data = app_in.model_dump()
     data["tenant_id"] = current_user.tenant_id
     if not data.get("id_vendedor"):
         data["id_vendedor"] = current_user.id

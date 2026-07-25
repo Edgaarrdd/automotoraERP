@@ -1,0 +1,54 @@
+---
+title: 'API REST - F&I y BDC'
+description: 'Especificación de endpoints para financiamiento F&I y prospectos BDC'
+---
+
+# Referencia API REST — F&I y BDC
+
+## Endpoints F&I (`/api/fi`)
+
+### Listar Solicitudes de Crédito
+```http
+GET /api/fi/solicitudes
+Authorization: Bearer <token>
+```
+
+### Crear Solicitud de Crédito
+```http
+POST /api/fi/solicitudes
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "id_cliente": "cust_123",
+  "id_vehiculo": "veh_456",
+  "entidad_financiera": "Forum",
+  "monto_solicitado": 8500000.0,
+  "pie_porcentaje": 20.0,
+  "observaciones": "Cliente demuestra ingresos con carpeta tributaria"
+}
+```
+
+---
+
+## Endpoints BDC (`/api/bdc`)
+
+### Listar Prospectos BDC
+```http
+GET /api/bdc/leads
+Authorization: Bearer <token>
+```
+
+### Crear Prospecto BDC
+```http
+POST /api/bdc/leads
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "nombre_prospecto": "Juan Pérez",
+  "telefono": "+56912345678",
+  "origen_contacto": "LLAMADA_ENTRANTE",
+  "vehiculo_interes": "Toyota RAV4 2022"
+}
+```

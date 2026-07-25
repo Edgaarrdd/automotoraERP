@@ -1,0 +1,94 @@
+---
+title: 'Despliegue con Docker'
+description: 'Guía de contenedorización y orquestación con Docker y Docker Compose para desarrollo y producción'
+---
+
+# Despliegue con Docker y Docker Compose
+
+El proyecto **CRM Automotora ERP** está completamente preparado para ejecutarse en entornos aislados mediante contenedores Docker.
+
+## Arquitectura de Contenedores
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Red Docker Bridge                    │
+│                   (automotora-network)                  │
+│                                                         │
+│  ┌────────────────────┐      ┌───────────────────────┐  │
+│  │   frontend         │      │   backend             │  │
+│  │   (Nginx Alpine)   │─────▶│   (FastAPI/Uvicorn)   │  │
+│  │                    │      │                       │  │
+│  │  Puerto Host: 3000 │      │  Puerto Host: 8000    │  │
+│  │  Proxy /api ───────┼──────┼──▶ SQLite /app/data/  │  │
+│  └────────────────────┘      └───────────────────────┘  │
+│                                           │             │
+│                                  ┌────────▼────────┐    │
+│                                  │  backend-data   │    │
+│                                  │  (Volumen)      │    │
+│                                  └─────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Inicio Rápido en 3 Pasos
+
+### 1. Clonar el repositorio y preparar entorno
+
+```bash
+git clone https://github.com/tu-organizacion/automotoraERP.git
+cd automotoraERP
+cp .env.docker.example .env.docker
+```
+
+### 2. Configurar variables de entorno
+
+Edita `.env.docker` según sea necesario:
+
+```env
+JWT_SECRET=tu-clave-secreta-de-32-bytes-minimo
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+DATABASE_URL=sqlite:///./data/automotora_crm.db
+CORS_ORIGINS=http://localhost:3000,http://localhost:80
+BACKEND_PORT=8000
+FRONTEND_PORT=3000
+```
+
+### 3. Construir y ejecutar contenedores
+
+```bash
+docker compose up -d --build
+```
+
+---
+
+## Acceso a Servicios
+
+| Servicio | URL | Descripción |
+| :--- | :--- | :--- |
+| **Frontend ERP** | `http://localhost:3000` | Interfaz Web SPA (React + Tailwind) |
+| **Backend REST API** | `http://localhost:8000` | API FastAPI |
+| **Documentación Swagger** | `http://localhost:8000/docs` | Swagger UI interactivo |
+| **Documentación ReDoc** | `http://localhost:8000/redoc` | Especificaciones ReDoc OpenAPI |
+
+---
+
+## Comandos Frecuentes
+
+```bash
+# Ver estado de los contenedores y healthchecks
+docker compose ps
+
+# Monitorear logs en tiempo real
+docker compose logs -f
+
+# Detener los servicios sin borrar la base de datos
+docker compose down
+
+# Reiniciar backend o frontend individualmente
+docker compose restart backend
+docker compose restart frontend
+
+# Ejecutar seed de prueba en el backend
+docker compose exec backend python -m app.seed
+```

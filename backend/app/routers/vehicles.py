@@ -52,7 +52,7 @@ def create_vehicle(
     if existing:
         raise HTTPException(status_code=400, detail=f"Ya existe un vehículo registrado con la patente {vehicle_in.patente}")
 
-    data = vehicle_in.dict()
+    data = vehicle_in.model_dump()
     data["patente"] = data["patente"].upper().strip()
     data["tenant_id"] = current_user.tenant_id
 

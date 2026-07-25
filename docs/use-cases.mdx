@@ -1,0 +1,43 @@
+---
+title: 'Casos de Uso Operacionales'
+description: 'Flujos de trabajo integrales end-to-end del CRM Automotora ERP'
+---
+
+# Casos de Uso Operacionales End-to-End
+
+El CRM Automotora ERP organiza los procesos de negocio en flujos transversales que conectan a la fuerza de ventas, financiamiento (F&I), atención telefónica (BDC) y gerencia.
+
+---
+
+## 1. Flujo Principal de Venta Vehicular
+
+```
+  ┌──────────────┐      ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
+  │ 1. Recepción │ ───▶ │ 2. Cotizador │ ───▶ │  3. Crédito  │ ───▶ │ 4. Cierre y  │
+  │   de Lead    │      │    y PDF     │      │   F&I / BDC  │      │ Comisiones   │
+  └──────────────┘      └──────────────┘      └──────────────┘      └──────────────┘
+```
+
+### Paso 1: Captura y Clasificación de Prospectos (Leads)
+- El Lead ingresa desde el sitio web público (Storefront CMS) o es registrado manualmente por un vendedor/agente BDC.
+- Se le asigna un score de intención de compra (FRÍO, TIBIO, CALIENTE) y una etapa en el Kanban (`NUEVO`, `CONTACTADO`, `COTIZADO`, `NEGOCIACION`, `RESERVADO`, `CERRADO_GANADO`).
+
+### Paso 2: Generación de Cotización Formal y Exportación PDF
+- El vendedor selecciona el vehículo del inventario en línea y simula las condiciones de pago (Pie %, número de cuotas, tasa de interés, seguro de desgravamen).
+- El sistema genera una cotización en HTML/PDF descargable con resumen financiero, desglose de impuestos y vigencia de 15 días.
+
+### Paso 3: Aprobación de Financiamiento F&I y Agendamiento BDC
+- Si el cliente requiere crédito automotriz, el ejecutivo F&I postula la solicitud a entidades financieras (Tanner, Forum, EuroCapital).
+- El BDC coordina citas para Test Drive o firma de contrato en sucursal.
+
+### Paso 4: Cierre, Actualización de Inventario y Liquidación de Comisiones
+- Al pasar la oportunidad a `CERRADO_GANADO`, el vehículo cambia automáticamente a estado `VENDIDO` asociando al vendedor victorioso.
+- El motor de comisiones calcula automáticamente el 1.5% del valor de venta más bonos F&I acumulados en la liquidación del mes.
+
+---
+
+## 2. Flujo de Consignaciones Vehiculares
+
+1. **Recepción del Vehículo**: Registro del dueño consignatario y tasación inicial.
+2. **Publicación en Catálogo Web**: Activación en el CMS y Storefront con badge de Consignación.
+3. **Venta y Liquidación**: Al concretarse la venta, el sistema genera la liquidación al consignatario reteniendo la comisión acordada.

@@ -21,7 +21,7 @@ def create_fi_solicitud(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_roles([RoleEnum.ADMIN, RoleEnum.GERENTE, RoleEnum.F_AND_I, RoleEnum.VENDEDOR]))
 ):
-    data = sol_in.dict()
+    data = sol_in.model_dump()
     data["tenant_id"] = current_user.tenant_id
     data["id_asesor_fi"] = current_user.id if current_user.rol == RoleEnum.F_AND_I else None
 

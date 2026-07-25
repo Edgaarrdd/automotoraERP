@@ -1,0 +1,42 @@
+---
+title: 'API REST - Seguridad y RBAC'
+description: 'Endpoints de prueba de permisos, autenticación y gestión de usuarios'
+---
+
+# Referencia API REST — Seguridad & RBAC
+
+## Endpoints de Seguridad (`/api/security`)
+
+### Probar Permiso Específico
+```http
+POST /api/security/test-permission
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "permission": "APROBAR_FI"
+}
+```
+
+### Probar Matriz de Permisos por Rol
+```http
+POST /api/security/test-role-access
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "action": "CREAR_COTIZACION",
+  "target_role": "VENDEDOR"
+}
+```
+
+### Probar Credenciales de Usuario
+```http
+POST /api/security/test-credentials
+Content-Type: application/json
+
+{
+  "email": "admin@origen.cl",
+  "password": "Admin123!"
+}
+```
