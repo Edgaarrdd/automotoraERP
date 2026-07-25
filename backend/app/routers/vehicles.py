@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from ..database import get_db
 from ..models import Vehicle, User, RoleEnum, VehicleStatusEnum
-from ..schemas import VehicleCreate, VehicleOut, VehicleUpdateStatus
+from ..schemas import VehicleCreate, VehicleOut, VehicleUpdateStatus, VehicleUpdateWebPublish
 from ..auth import get_current_user, require_roles
 
 router = APIRouter(prefix="/api/vehicles", tags=["Inventario de Vehículos"])
@@ -77,6 +77,27 @@ def update_vehicle_status(
     if status_update.estado == VehicleStatusEnum.VENDIDO:
         vehicle.id_vendedor_vendio = current_user.id
     
+    db.commit()
+    db.refresh(vehicle)
+    return vehicle
+
+@router.patch("/{vehicle_id}/web-publish", response_model=VehicleOut)
+def update_vehicle_web_publish(
+    vehicle_id: str,
+    web_update: VehicleUpdateWebPublish,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles([RoleEnum.ADMIN, RoleEnum.GERENTE, RoleEnum.VENDEDOR]))
+):
+    vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehículo no encontrado")
+
+    vehicle.publicado_web = web_update.publicado_web
+    if web_update.destacado_web is not None:
+        vehicle.destacado_web = web_update.destacado_web
+    if web_update.precio_oferta_web is not None:
+        vehicle.precio_oferta_web = web_update.precio_oferta_web
+
     db.commit()
     db.refresh(vehicle)
     return vehicle

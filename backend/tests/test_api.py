@@ -319,6 +319,87 @@ def test_commissions_flow():
     assert patch_res.status_code == 200
     assert patch_res.json()["estado_liquidacion"] == "PAGADA"
 
+def test_public_storefront_cms_flow():
+    # 1. Login as Admin
+    login_res = client.post(
+        "/api/auth/login",
+        json={"email": "admin@origen.cl", "password": "Admin123!"}
+    )
+    token = login_res.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 2. Get and update CMS config
+    cms_get = client.get("/api/cms/config", headers=headers)
+    assert cms_get.status_code == 200
+
+    cms_patch = client.patch(
+        "/api/cms/config",
+        headers=headers,
+        json={
+            "slogan": "La mejor automotora de Las Condes",
+            "color_primario": "#0284c7",
+            "whatsapp_contacto": "+56912345678"
+        }
+    )
+    assert cms_patch.status_code == 200
+    assert cms_patch.json()["slogan"] == "La mejor automotora de Las Condes"
+
+    # 3. Create vehicle & publish to web
+    v_res = client.post(
+        "/api/vehicles/",
+        headers=headers,
+        json={
+            "patente": "WEB999",
+            "marca": "Subaru",
+            "modelo": "Outback",
+            "año": 2023,
+            "kilometraje": 12000,
+            "precio_compra_tasacion": 18000000,
+            "precio_venta_publico": 22490000,
+            "estado": "DISPONIBLE"
+        }
+    )
+    assert v_res.status_code == 201
+    vehicle_id = v_res.json()["id"]
+
+    pub_res = client.patch(
+        f"/api/vehicles/{vehicle_id}/web-publish",
+        headers=headers,
+        json={"publicado_web": True, "destacado_web": True, "precio_oferta_web": 21990000}
+    )
+    assert pub_res.status_code == 200
+    assert pub_res.json()["publicado_web"] is True
+
+    # 4. Access public endpoints without token
+    pub_cfg = client.get("/api/public/tenant_origen/config")
+    assert pub_cfg.status_code == 200
+    assert pub_cfg.json()["slogan"] == "La mejor automotora de Las Condes"
+
+    pub_veh_list = client.get("/api/public/tenant_origen/vehicles")
+    assert pub_veh_list.status_code == 200
+    veh_list = pub_veh_list.json()
+    assert len(veh_list) >= 1
+    assert veh_list[0]["marca"] == "Subaru"
+
+    pub_veh_det = client.get(f"/api/public/tenant_origen/vehicles/{vehicle_id}")
+    assert pub_veh_det.status_code == 200
+    assert pub_veh_det.json()["web_view_count"] == 1
+
+    # 5. Submit public web lead
+    lead_sub = client.post(
+        "/api/public/tenant_origen/leads",
+        json={
+            "nombre_completo": "Juan Perez Web",
+            "telefono": "+56988776655",
+            "email": "juan.web@gmail.com",
+            "mensaje": "Quiero cotizar este Subaru",
+            "id_vehiculo_interes": vehicle_id
+        }
+    )
+    assert lead_sub.status_code == 201
+    assert lead_sub.json()["success"] is True
+
+
 
 
 

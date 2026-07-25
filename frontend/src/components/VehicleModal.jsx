@@ -62,20 +62,55 @@ export default function VehicleModal({ vehicle, onClose, onUpdateStatus, current
             </div>
           </div>
 
-          {/* Status Change Selector */}
-          <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300">Actualizar Estado en Inventario:</span>
-            <select
-              value={selectedStatus}
-              onChange={handleStatusChange}
-              className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-sky-400 font-bold focus:outline-none"
-            >
-              <option value="DISPONIBLE">DISPONIBLE</option>
-              <option value="RESERVADO">RESERVADO</option>
-              <option value="VENDIDO">VENDIDO</option>
-              <option value="PREPARACION">EN PREPARACIÓN / TALLER</option>
-              <option value="EVALUACION">EN EVALUACIÓN</option>
-            </select>
+          {/* Status & CMS Web Publishing Controls */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-300">Estado en Inventario:</span>
+              <select
+                value={selectedStatus}
+                onChange={handleStatusChange}
+                className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-sky-400 font-bold focus:outline-none"
+              >
+                <option value="DISPONIBLE">DISPONIBLE</option>
+                <option value="RESERVADO">RESERVADO</option>
+                <option value="VENDIDO">VENDIDO</option>
+                <option value="PREPARACION">EN PREPARACIÓN / TALLER</option>
+                <option value="EVALUACION">EN EVALUACIÓN</option>
+              </select>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-sky-950/30 border border-sky-500/30 flex items-center justify-between">
+              <div>
+                <span className="text-xs font-bold text-sky-300 block">🌐 Publicación Web Storefront</span>
+                <span className="text-[10px] text-slate-400">Hace el auto visible en el sitio público</span>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  const newWebVal = !vehicle.publicado_web;
+                  vehicle.publicado_web = newWebVal;
+                  try {
+                    await fetch(`/api/vehicles/${vehicle.id}/web-publish`, {
+                      method: 'PATCH',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('automotora_token') || ''}`
+                      },
+                      body: JSON.stringify({ publicado_web: newWebVal, destacado_web: vehicle.destacado_web })
+                    });
+                  } catch (e) {
+                    console.warn(e);
+                  }
+                }}
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition ${
+                  vehicle.publicado_web
+                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                    : 'bg-slate-800 text-slate-400 border border-slate-700'
+                }`}
+              >
+                {vehicle.publicado_web ? '🌐 Publicado en Web' : 'Despublicado'}
+              </button>
+            </div>
           </div>
 
           {/* Technical Specs Grid */}

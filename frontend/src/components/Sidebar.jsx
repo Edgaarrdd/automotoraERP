@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Car, GitCommit, Calendar, FileText, BadgePercent, PhoneCall, ShieldCheck, BookOpen, Eye, Award, Layers } from 'lucide-react';
+import { LayoutDashboard, Car, GitCommit, Calendar, FileText, BadgePercent, PhoneCall, ShieldCheck, BookOpen, Eye, Award, Layers, Globe } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab, currentUser }) {
   const role = currentUser?.rol || 'ADMIN';
@@ -9,6 +9,7 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }) {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'GERENTE', 'VENDEDOR', 'MARKETING', 'F_AND_I', 'TALLER', 'BDC'] },
     { id: 'inventory', label: 'Inventario Autos', icon: Car, roles: ['ADMIN', 'GERENTE', 'VENDEDOR', 'MARKETING', 'F_AND_I', 'TALLER', 'BDC'] },
     { id: 'kanban', label: 'Pipeline Ventas', icon: GitCommit, roles: ['ADMIN', 'GERENTE', 'VENDEDOR', 'BDC'] },
+    { id: 'cms', label: 'Mi Sitio Web (CMS)', icon: Globe, roles: ['ADMIN', 'GERENTE', 'VENDEDOR', 'MARKETING'], badge: 'CMS' },
     { id: 'consignments', label: 'Portal Consignatario', icon: Eye, roles: ['ADMIN', 'GERENTE', 'VENDEDOR', 'BDC'] },
     { id: 'commissions', label: 'Comisiones Ventas', icon: Award, roles: ['ADMIN', 'GERENTE', 'VENDEDOR'] },
     { id: 'calendar', label: 'Agenda & Citas', icon: Calendar, roles: ['ADMIN', 'GERENTE', 'VENDEDOR', 'BDC', 'TALLER'] },

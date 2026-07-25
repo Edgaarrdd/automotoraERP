@@ -131,7 +131,14 @@ export default function Inventory({ vehicles, onSelectVehicle, onOpenNewVehicleM
               {/* Price Tag & Legal Status */}
               <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] font-semibold text-slate-400 block uppercase">Precio Venta Público</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase">Precio Venta Público</span>
+                    {v.publicado_web && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 flex items-center gap-1">
+                        🌐 Publicado Web
+                      </span>
+                    )}
+                  </div>
                   <div className="text-lg font-extrabold text-emerald-400">
                     {formatCLP(v.precio_venta_publico)}
                   </div>

@@ -85,12 +85,22 @@ class VehicleBase(BaseModel):
     urls_fotos: List[str] = []
     urls_documentos: List[str] = []
     historial_legal: Optional[dict] = None
+    publicado_web: bool = False
+    destacado_web: bool = False
+    precio_oferta_web: Optional[float] = None
+    orden_visualizacion: int = 0
+    web_view_count: int = 0
 
 class VehicleCreate(VehicleBase):
     pass
 
 class VehicleUpdateStatus(BaseModel):
     estado: VehicleStatusEnum
+
+class VehicleUpdateWebPublish(BaseModel):
+    publicado_web: bool
+    destacado_web: Optional[bool] = False
+    precio_oferta_web: Optional[float] = None
 
 class VehicleOut(VehicleBase):
     id: str
@@ -101,6 +111,60 @@ class VehicleOut(VehicleBase):
 
     class Config:
         from_attributes = True
+
+# CMS & Public Storefront Schemas
+class TenantCMSUpdate(BaseModel):
+    sitio_web_activo: Optional[bool] = True
+    slogan: Optional[str] = None
+    color_primario: Optional[str] = "#0284c7"
+    logo_url: Optional[str] = None
+    banner_url: Optional[str] = None
+    whatsapp_contacto: Optional[str] = None
+    direccion_fisica: Optional[str] = None
+
+class TenantPublicConfig(BaseModel):
+    nombre_empresa: str
+    subdominio: str
+    sitio_web_activo: bool
+    slogan: Optional[str] = None
+    color_primario: str
+    logo_url: Optional[str] = None
+    banner_url: Optional[str] = None
+    whatsapp_contacto: str
+    direccion_fisica: str
+
+class VehiclePublicOut(BaseModel):
+    id: str
+    marca: str
+    modelo: str
+    version: Optional[str] = None
+    año: int
+    kilometraje: int
+    tipo_combustible: str
+    transmision: str
+    color: Optional[str] = None
+    precio_venta_publico: float
+    precio_oferta_web: Optional[float] = None
+    estado: str
+    destacado_web: bool
+    urls_fotos: List[str] = []
+    patente_parcial: str
+
+class VehiclePublicDetail(VehiclePublicOut):
+    motor: Optional[str] = None
+    num_puertas: int = 5
+    num_asientos: int = 5
+    historial_legal: Optional[dict] = None
+    web_view_count: int = 0
+
+class WebLeadCreate(BaseModel):
+    nombre_completo: str
+    telefono: str
+    email: EmailStr
+    rut_dni: Optional[str] = None
+    mensaje: Optional[str] = None
+    id_vehiculo_interes: Optional[str] = None
+    tipo_consulta: str = "COTIZACION"
 
 # Lead Schemas
 class LeadBase(BaseModel):

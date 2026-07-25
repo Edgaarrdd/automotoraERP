@@ -137,6 +137,16 @@ Los modelos principales definidos en `backend/app/models.py`:
 10. **Seguridad & Roles:** Matriz interactiva RBAC y cambiador rápido de usuario para testing.
 11. **Onboarding Tour:** Tour interactivo guiado por cada rol usando `driver.js`.
 12. **Portal de Documentación (`DocsSection`):** Interfaz para consultar la documentación directamente desde la aplicación.
+13. **CMS Storefront ("Mi Sitio Web"):** Módulo administrativo para configurar y gestionar el sitio web público de la automotora (branding, publicación de vehículos, analíticas web).
+
+---
+
+## 7. Documentación del Módulo CMS Storefront
+
+El módulo CMS Storefront es un producto complementario que permite a cada automotora crear su propio sitio web público de catálogo de vehículos, conectado en tiempo real al ERP.
+
+- **Casos de Uso (16 CU):** Ver `CASOS_USO_CMS_STOREFRONT.md` — Define los 16 casos de uso del módulo (CU 9.1 a CU 9.16).
+- **Documentación Técnica:** Ver `DOCUMENTACION_TECNICA_CMS_STOREFRONT.md` — Arquitectura híbrida, modelo de datos, endpoints API, seguridad y roadmap.
 
 ---
 

@@ -169,7 +169,14 @@ export default function PipelineKanban({ leads, onUpdateStage, onOpenNewLeadModa
                             {lead.customer ? lead.customer.telefono : '+569 1122 3344'}
                           </p>
                         </div>
-                        {getScoreBadge(lead.score_lead || 'CALIENTE')}
+                        <div className="flex flex-col items-end gap-1">
+                          {getScoreBadge(lead.score_lead || 'CALIENTE')}
+                          {(lead.customer?.origen === 'SITIO_WEB' || lead.customer?.origen === 'WEB') && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 flex items-center gap-1">
+                              🌐 Lead Web
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Vehicle associated */}

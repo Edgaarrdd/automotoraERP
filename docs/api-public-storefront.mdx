@@ -1,0 +1,53 @@
+---
+title: "API Storefront Público & CMS"
+description: "Endpoints REST para consumo del portal web público y administración del CMS."
+---
+
+# ⚡ Referencia de API Storefront Público & CMS
+
+## 🌐 Endpoints Públicos (`/api/public/{tenant_slug}/`)
+*Puntos de acceso para el portal público cliente final (Sin autenticación JWT).*
+
+### `GET /api/public/{tenant_slug}/config`
+Obtiene la configuración pública de branding, slogan, colores y contacto de la automotora.
+
+### `GET /api/public/{tenant_slug}/vehicles`
+Obtiene el catálogo público de vehículos en stock con filtros.
+
+**Query Parameters:**
+- `search` (opcional): Filtro libre por marca o modelo.
+- `marca` (opcional): Filtro exacto de marca.
+- `destacados_only` (bool): `true` para retornar solo vehículos destacados.
+
+### `GET /api/public/{tenant_slug}/vehicles/{vehicle_id}`
+Obtiene la ficha pública detallada de un vehículo e incrementa automáticamente el contador de vistas `web_view_count`.
+
+### `POST /api/public/{tenant_slug}/leads`
+Captura el formulario de contacto del cliente web. Crea el cliente y genera un lead en el pipeline Kanban con badge `🌐 Lead Web`.
+
+**Body Schema:**
+```json
+{
+  "nombre_completo": "Juan Pérez",
+  "telefono": "+56912345678",
+  "email": "juan@ejemplo.cl",
+  "rut_dni": "18.765.432-1",
+  "mensaje": "Quiero solicitar evaluación de crédito para este vehículo",
+  "id_vehiculo_interes": "v_12345",
+  "tipo_consulta": "COTIZACION"
+}
+```
+
+---
+
+## 🎨 Endpoints de Administración CMS (`/api/cms/`)
+*Puntos de acceso del panel administrativo del ERP (Requiere Bearer Token JWT).*
+
+### `GET /api/cms/config`
+Obtiene la configuración actual del CMS del tenant autenticado.
+
+### `PATCH /api/cms/config`
+Actualiza el slogan, color primario, logo, banner, WhatsApp o estado del sitio web.
+
+### `PATCH /api/vehicles/{vehicle_id}/web-publish`
+Actualiza el estado de publicación web (`publicado_web`, `destacado_web`, `precio_oferta_web`) de un vehículo.

@@ -80,6 +80,15 @@ class Tenant(Base):
     activo = Column(Boolean, default=True)
     fecha_creacion = Column(DateTime, default=datetime.utcnow)
 
+    # Storefront CMS customization fields
+    sitio_web_activo = Column(Boolean, default=True)
+    slogan = Column(String, default="Tu automotora de confianza en Chile")
+    color_primario = Column(String, default="#0284c7")
+    logo_url = Column(String, nullable=True)
+    banner_url = Column(String, nullable=True)
+    whatsapp_contacto = Column(String, default="+56912345678")
+    direccion_fisica = Column(String, default="Av. Vitacura 4560, Santiago")
+
     users = relationship("User", back_populates="tenant")
 
 class User(Base):
@@ -153,6 +162,13 @@ class Vehicle(Base):
     urls_fotos = Column(JSON, default=list)
     urls_documentos = Column(JSON, default=list)
     historial_legal = Column(JSON, nullable=True)
+
+    # CMS Web Storefront fields
+    publicado_web = Column(Boolean, default=False)
+    destacado_web = Column(Boolean, default=False)
+    precio_oferta_web = Column(Float, nullable=True)
+    orden_visualizacion = Column(Integer, default=0)
+    web_view_count = Column(Integer, default=0)
 
     consignor = relationship("Customer", back_populates="vehicles_consigned")
     leads = relationship("LeadOpportunity", back_populates="vehicle")

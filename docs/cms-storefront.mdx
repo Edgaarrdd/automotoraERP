@@ -1,0 +1,44 @@
+---
+title: "CMS Storefront & Sitios Web"
+description: "Módulo para crear, personalizar y administrar el portal web público de catálogo de autos de cada automotora."
+---
+
+# 🌐 CMS Storefront & Portal Web Público
+
+El módulo **CMS Storefront** permite a cada automotora (tenant) del sistema contar con su propio portal web público para exhibir su catálogo de vehículos en tiempo real, capturar leads inbound y sincronizarlos automáticamente con el pipeline comercial del ERP.
+
+---
+
+## 🎨 Branding y Personalización en Tiempo Real
+
+Desde el módulo **"Mi Sitio Web (CMS)"** en el ERP, los administradores y gerentes pueden personalizar:
+
+- **Slogan Comercial:** Frase destacada en el encabezado del portal público.
+- **Color Primario de Marca:** Selector hexadecimal que tiñe dinámicamente el header y botones del portal público.
+- **WhatsApp de Contacto:** Enlace directo de atención comercial al cliente.
+- **Dirección Física:** Ubicación del salón de ventas.
+- **Logo y Banner Hero:** Imágenes corporativas en formato PNG, JPG o SVG.
+- **Estado del Sitio Web:** Toggle ON/OFF para activar o poner el sitio público en mantenimiento.
+
+---
+
+## 🚗 Publicación de Vehículos al Sitio Web
+
+En el módulo de Inventario o dentro de la ficha de cada auto, los usuarios pueden:
+
+1. Activar el switch **"🌐 Publicar en Sitio Web"**.
+2. Marcar vehículos como **"🔥 Destacado Web"** para aparecer en la marquesina de portada.
+3. Definir un **"Precio Oferta Web"** (mostrando el precio público original tachado).
+
+> [!NOTE]
+> Solo los vehículos en estado `DISPONIBLE` o `RESERVADO` son visibles públicamente. Al pasar a `VENDIDO`, se despublican automáticamente del portal.
+
+---
+
+## 📥 Captura Automática de Leads Inbound
+
+Cuando un comprador llena el formulario de contacto o simula su crédito en el portal público:
+
+1. El backend busca o crea el cliente registrando `origen = "SITIO_WEB"`.
+2. Asigna automáticamente el lead al vendedor de turno (o BDC).
+3. Crea la oportunidad en la etapa `NUEVO` del tablero Kanban con un badge distintivo `🌐 Lead Web`.

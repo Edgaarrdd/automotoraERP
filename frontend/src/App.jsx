@@ -17,6 +17,8 @@ import FISection from './components/FISection';
 import BDCSection from './components/BDCSection';
 import SecuritySection from './components/SecuritySection';
 import DocsSection from './components/DocsSection';
+import CMSSection from './components/CMSSection';
+import StorefrontView from './components/StorefrontView';
 import OnboardingTour from './components/OnboardingTour';
 import { apiFetch, getCurrentUserData, setCurrentUserData, setAuthToken } from './services/api';
 
@@ -36,6 +38,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('security');
   const [activeSubTab, setActiveSubTab] = useState('tester');
   const [isTourOpen, setIsTourOpen] = useState(false);
+  const [isStorefrontPreviewOpen, setIsStorefrontPreviewOpen] = useState(false);
 
   // States initialized cleanly for Alpha 0.0.1 / Beta 0.1.0
   const [vehicles, setVehicles] = useState([]);
@@ -461,9 +464,18 @@ export default function App() {
             <BDCSection bdcLeads={bdcLeads} onSubmitBDC={handleCreateBDCLead} />
           )}
 
+          {activeTab === 'cms' && (
+            <CMSSection onOpenStorefrontPreview={() => setIsStorefrontPreviewOpen(true)} />
+          )}
+
           {activeTab === 'docs' && <DocsSection />}
         </main>
       </div>
+
+      {/* Public Storefront Preview Modal */}
+      {isStorefrontPreviewOpen && (
+        <StorefrontView onClose={() => setIsStorefrontPreviewOpen(false)} />
+      )}
 
       {/* Modals */}
       {selectedVehicle && (
