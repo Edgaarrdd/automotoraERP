@@ -1,0 +1,67 @@
+---
+title: "Guía de Inicio Rápido"
+description: "Instrucciones paso a paso para clonar, configurar e iniciar CRM Automotora ERP localmente o en servidor."
+---
+
+## ⚡ 1. Clonal el Repositorio
+
+```bash
+git clone https://github.com/tu-usuario/automotoraERP.git
+cd automotoraERP
+```
+
+---
+
+## 🐍 2. Configurar Servidor Backend (FastAPI)
+
+Navega a la carpeta `backend/` y crea el entorno virtual de Python:
+
+```bash
+cd backend
+python -m venv venv
+
+# En Windows PowerShell
+.\venv\Scripts\activate
+
+# En Linux / macOS
+source venv/bin/activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+```
+
+Copia la configuración de entorno:
+```bash
+cp .env.example .env
+```
+
+Iniciar servidor en modo desarrollo:
+```bash
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+> **Servidor Activo:** `http://localhost:8000`
+> **Documentación Swagger:** `http://localhost:8000/docs`
+
+---
+
+## ⚛️ 3. Configurar Cliente Frontend (React + Vite)
+
+Abre un segundo terminal y navega a `frontend/`:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+> **Cliente Web Activo:** `http://localhost:3000`
+
+---
+
+## 🧪 4. Ejecutar Suite de Pruebas Automatizadas
+
+```bash
+cd backend
+python -m pytest tests/test_api.py
+```

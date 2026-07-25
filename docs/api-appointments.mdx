@@ -1,0 +1,31 @@
+---
+title: "API Agenda & Citas"
+description: "Endpoints REST para gestión de agenda, pruebas de manejo y reuniones comerciales."
+---
+
+# 📅 API Agenda & Citas
+
+### `GET /api/appointments/`
+Lista todas las citas programadas en la agenda.
+
+---
+
+### `POST /api/appointments/`
+Crea una nueva cita o Test Drive.
+
+**Body Schema:**
+```json
+{
+  "titulo": "Test Drive Suzuki Swift",
+  "tipo": "TEST_DRIVE",
+  "fecha_inicio": "2026-07-26T10:00:00",
+  "fecha_fin": "2026-07-26T11:00:00",
+  "id_vehiculo": "v_12345",
+  "notas": "Cliente solicita prueba en autopista"
+}
+```
+
+---
+
+### `PATCH /api/appointments/{id}/status`
+Actualiza el estado de la cita (`AGENDADA`, `COMPLETADA`, `CANCELADA`).

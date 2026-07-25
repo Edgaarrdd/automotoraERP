@@ -1,0 +1,19 @@
+---
+title: "Matriz de Roles RBAC"
+description: "Segregación de funciones y matriz de permisos por rol en el sistema."
+---
+
+# 🛡️ Matriz de Control de Acceso (RBAC)
+
+El sistema define 8 roles funcionales en `RoleEnum`:
+
+| Módulo / Función | ADMIN | GERENTE | VENDEDOR | BDC | F&I | MARKETING | TALLER |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dashboard & Métricas** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Crear / Editar Vehículos** | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Pipeline Kanban Ventas** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **Cotizador & Impresión PDF** | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Agenda Citas & Test Drives** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| **Portal del Consignatario** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **Liquidación de Comisiones** | ✅ | ✅ | ✅ (Ver propia) | ❌ | ❌ | ❌ | ❌ |
+| **Gestión Seguridad & Roles** | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |

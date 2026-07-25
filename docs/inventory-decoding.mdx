@@ -1,0 +1,17 @@
+---
+title: "Inventario & Decodificación de Patentes"
+description: "Ingreso de vehículos, decodificación inteligente por patente formato Chile e historial legal."
+---
+
+# 🚗 Módulo de Inventario & Decodificación (CU 2.1)
+
+El módulo de inventario permite gestionar el catálogo completo de vehículos de la automotora.
+
+## 🔮 Decodificador de Patentes (Registro Civil / Autofact)
+
+Al ingresar una patente (ej: `KJPW99`, `CLFL88`, `HGJK44`, `BB1234`), el sistema invoca el endpoint `GET /api/vehicles/decode/{patente}` y autocompleta:
+- Marca, Modelo, Versión y Año
+- Motor, Tipo de Combustible y Transmisión
+- Número VIN (17 caracteres)
+- Tasación Sugerida de Compra y Precio Venta Público
+- Verificación de Multas de Tránsito y Registro de Prendas

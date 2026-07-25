@@ -1,0 +1,52 @@
+---
+title: "Seguridad & Variables de Entorno"
+description: "Pautas de seguridad, hashing de contraseñas, tokens JWT y buenas prácticas para repositorios públicos."
+---
+
+# 🛡️ Seguridad & Protección de Datos
+
+Para desplegar la aplicación de manera segura tras publicar el repositorio en GitHub, sigue estas pautas obligatorias.
+
+<Warning>
+**¡Atención!** Nunca subas archivos `.env` reales o tokens de producción al repositorio público. Utiliza siempre `.env.example` como plantilla.
+</Warning>
+
+## 🔐 1. Generación de JWT Secret Key
+
+En entorno de desarrollo, el sistema utiliza una clave secreta por defecto. Para producción, genera un secreto único de 32 bytes ejecutando:
+
+```python
+import secrets
+print(secrets.token_hex(32))
+```
+
+Configúralo en `backend/.env`:
+```env
+JWT_SECRET=4a92f81c9b207e33a1d94f8261e405a761b...
+```
+
+---
+
+## 👥 2. Usuarios Semilla y Cambios de Contraseña
+
+Por defecto, la base de datos inicializa usuarios de demostración. **Cambia estas contraseñas inmediatamente en producción:**
+
+- `admin@origen.cl` ➔ Role ADMIN
+- `gerente@origen.cl` ➔ Role GERENTE
+- `vendedor1@origen.cl` ➔ Role VENDEDOR
+- `fi@origen.cl` ➔ Role F_AND_I
+- `bdc@origen.cl` ➔ Role BDC
+- `taller@origen.cl` ➔ Role TALLER
+
+---
+
+## 🌐 3. Configuración CORS Restringida
+
+Asegúrate de restringir los dominios permitidos en `backend/app/main.py` o `.env`:
+
+```python
+origins = [
+    "https://tuautomotora.com",
+    "http://localhost:3000"
+]
+```

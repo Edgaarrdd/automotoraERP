@@ -1,0 +1,65 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "CRM Automotora ERP",
+  "logo": {
+    "dark": "https://raw.githubusercontent.com/lucide-react/main/icons/car.svg",
+    "light": "https://raw.githubusercontent.com/lucide-react/main/icons/car.svg"
+  },
+  "favicon": "https://raw.githubusercontent.com/lucide-react/main/icons/car.svg",
+  "colors": {
+    "primary": "#0284C7",
+    "light": "#38BDF8",
+    "dark": "#0369A1",
+    "topbar": "#0F172A"
+  },
+  "topbarLinks": [
+    {
+      "name": "Demo en Vivo",
+      "url": "http://localhost:5173"
+    }
+  ],
+  "topbarCta": {
+    "name": "Swagger REST API",
+    "url": "http://localhost:8000/docs"
+  },
+  "navigation": [
+    {
+      "group": "Primeros Pasos",
+      "pages": [
+        "docs/introduction",
+        "docs/quickstart",
+        "docs/security"
+      ]
+    },
+    {
+      "group": "Arquitectura & DB",
+      "pages": [
+        "docs/architecture",
+        "docs/rbac-matrix",
+        "docs/database-schema"
+      ]
+    },
+    {
+      "group": "Módulos Comerciales",
+      "pages": [
+        "docs/inventory-decoding",
+        "docs/sales-kanban",
+        "docs/quote-pdf-generator",
+        "docs/calendar-test-drives",
+        "docs/consignments-portal",
+        "docs/commissions-payroll"
+      ]
+    },
+    {
+      "group": "Referencia API REST",
+      "pages": [
+        "docs/api-overview",
+        "docs/api-vehicles",
+        "docs/api-quotes",
+        "docs/api-appointments",
+        "docs/api-consignments",
+        "docs/api-commissions"
+      ]
+    }
+  ]
+}

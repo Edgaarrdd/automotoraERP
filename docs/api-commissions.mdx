@@ -1,0 +1,14 @@
+---
+title: "API Comisiones & Sueldos"
+description: "Endpoints REST para el cálculo y aprobación de liquidación de sueldos comerciales."
+---
+
+# 🏆 API Liquidación de Comisiones
+
+### `GET /api/commissions/summary`
+Obtiene el desglose de comisiones mensuales acumuladas por cada vendedor.
+
+---
+
+### `PATCH /api/commissions/{vendedor_id}/status`
+Permite a Gerencia o Admin actualizar el estado de pago de las comisiones (`APROBADA`, `PAGADA`, `PENDIENTE_REVISION`).

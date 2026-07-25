@@ -1,0 +1,22 @@
+---
+title: "Visión General de la API"
+description: "Estándares REST, autenticación JWT Bearer y formatos de respuesta."
+---
+
+# ⚡ Referencia de API REST
+
+La API está construida sobre FastAPI y cumple los estándares OpenAPI 3.0.
+
+- **Base URL:** `http://localhost:8000/api`
+- **Autenticación:** Header HTTP `Authorization: Bearer <TOKEN>`
+- **Formato:** JSON (UTF-8)
+
+## Codigos de Respuesta HTTP
+
+| Código | Significado |
+| :--- | :--- |
+| `200 OK` | Petición exitosa |
+| `201 Created` | Recurso creado exitosamente |
+| `401 Unauthorized` | Token JWT ausente o expirado |
+| `403 Forbidden` | Rol insubsistente para ejecutar la acción |
+| `404 Not Found` | Recurso no encontrado |

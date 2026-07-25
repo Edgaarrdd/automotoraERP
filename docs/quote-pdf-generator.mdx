@@ -1,0 +1,22 @@
+---
+title: "Cotizador & Impresión PDF"
+description: "Simulación de crédito, Crédito Inteligente VFG y generación de documentos imprimibles PDF."
+---
+
+# 📄 Cotizador & Generación de PDF
+
+El simulador financiero permite calcular la cuota mensual para:
+1. **Crédito Convencional** (12 a 60 meses)
+2. **Crédito Inteligente** (24 a 36 meses con VFG - Valor Futuro Garantizado)
+3. **Pago al Contado**
+
+## 🖨️ Impresión Corporativa PDF (@media print)
+
+Al hacer clic en **"Imprimir / Guardar PDF"**, el sistema aplica las reglas CSS de `@media print` aislando la hoja membretada de la automotora con:
+- Membrete oficial de *Automotora Origen SpA*
+- Folio único `COT-2026-XXXX` y fecha de validez (15 días)
+- Desglose financiero tabulado
+- Espacios para firma del cliente y asesor comercial
+
+También es posible generar el PDF de la cotización desde el backend invocando:
+`GET /api/quotes/{quote_id}/pdf-html`

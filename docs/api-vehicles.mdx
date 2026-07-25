@@ -1,0 +1,44 @@
+---
+title: "API Vehículos & Patentes"
+description: "Endpoints REST para gestión de stock y decodificación de patentes."
+---
+
+# 🚗 API Vehículos
+
+### `GET /api/vehicles/`
+Obtiene la lista de vehículos en inventario.
+
+**Query Parameters:**
+- `estado` (opcional): `DISPONIBLE`, `RESERVADO`, `VENDIDO`, `EVALUACION`
+- `search` (opcional): Filtro de texto por marca, modelo, patente o VIN
+
+---
+
+### `GET /api/vehicles/decode/{patente}`
+Decodifica la patente y consulta el informe del Registro Civil / Autofact.
+
+**Ejemplo de Petición:**
+```bash
+curl -X GET "http://localhost:8000/api/vehicles/decode/KJPW99" \
+     -H "Authorization: Bearer <TOKEN>"
+```
+
+**Ejemplo de Respuesta:**
+```json
+{
+  "patente": "KJPW99",
+  "vin": "JN1TANT32U0019284",
+  "marca": "Nissan",
+  "modelo": "Kicks",
+  "version": "1.6 Exclusive CVT",
+  "año": 2022,
+  "kilometraje": 28000,
+  "precio_compra_tasacion": 11000000,
+  "precio_venta_publico": 13490000,
+  "historial_legal": {
+    "multas_transitadas": 0,
+    "prenda_vigente": false,
+    "revision_tecnica_al_dia": true
+  }
+}
+```

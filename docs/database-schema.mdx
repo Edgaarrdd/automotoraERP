@@ -1,0 +1,39 @@
+---
+title: "Modelos de Base de Datos"
+description: "Modelos SQLAlchemy ORM, relaciones y llaves foráneas."
+---
+
+# 🗄️ Esquema Entidad-Relación
+
+## Modelos Principales
+
+### `User` (usuarios)
+Representa a los ejecutivos y colaboradores de la automotora.
+- `id`: String (UUID)
+- `tenant_id`: Foreign Key (`tenants.id`)
+- `nombre`: String
+- `email`: String (Unique)
+- `password_hash`: String (Bcrypt)
+- `rol`: Enum (`RoleEnum`)
+
+### `Vehicle` (vehiculos)
+Representa los vehículos en stock o en evaluación.
+- `id`: String (UUID)
+- `patente`: String (Unique, Formato Chile)
+- `vin`: String (17 caracteres)
+- `marca`: String
+- `modelo`: String
+- `año`: Integer
+- `precio_compra_tasacion`: Float
+- `precio_venta_publico`: Float
+- `estado`: Enum (`EVALUACION`, `DISPONIBLE`, `RESERVADO`, `VENDIDO`)
+- `id_consignatario`: Foreign Key (`clientes.id`, nullable)
+
+### `LeadOpportunity` (leads_oportunidades)
+Oportunidades en el embudo comercial.
+- `id`: String (UUID)
+- `id_cliente`: Foreign Key (`clientes.id`, nullable)
+- `id_vehiculo_interes`: Foreign Key (`vehiculos.id`, nullable)
+- `id_vendedor_asignado`: Foreign Key (`usuarios.id`)
+- `estado_embudo`: Enum (`NUEVO`, `CONTACTADO`, `TEST_DRIVE_AGENDADO`, `NEGOCIACION`, `RESERVADO`, `CERRADO_GANADO`, `CERRADO_PERDIDO`)
+- `score_lead`: Enum (`CALIENTE`, `TIBIO`, `FRIO`)
