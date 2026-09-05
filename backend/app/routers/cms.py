@@ -25,6 +25,9 @@ def get_cms_config(
         sitio_web_activo=tenant.sitio_web_activo if tenant.sitio_web_activo is not None else True,
         slogan=tenant.slogan or "Tu automotora de confianza en Chile",
         color_primario=tenant.color_primario or "#0284c7",
+        tema_diseno=tenant.tema_diseno or "dark_luxury",
+        dominio_personalizado=tenant.dominio_personalizado,
+        estado_dns=tenant.estado_dns or "PENDIENTE",
         logo_url=tenant.logo_url,
         banner_url=tenant.banner_url,
         whatsapp_contacto=tenant.whatsapp_contacto or "+56912345678",
@@ -49,6 +52,13 @@ def update_cms_config(
         tenant.slogan = cms_in.slogan
     if cms_in.color_primario is not None:
         tenant.color_primario = cms_in.color_primario
+    if cms_in.tema_diseno is not None:
+        tenant.tema_diseno = cms_in.tema_diseno
+    if cms_in.dominio_personalizado is not None:
+        tenant.dominio_personalizado = cms_in.dominio_personalizado
+        tenant.estado_dns = "VERIFICADO" if cms_in.dominio_personalizado.strip() else "NO_CONFIGURADO"
+    if cms_in.estado_dns is not None:
+        tenant.estado_dns = cms_in.estado_dns
     if cms_in.logo_url is not None:
         tenant.logo_url = cms_in.logo_url
     if cms_in.banner_url is not None:
@@ -67,6 +77,9 @@ def update_cms_config(
         sitio_web_activo=tenant.sitio_web_activo,
         slogan=tenant.slogan,
         color_primario=tenant.color_primario,
+        tema_diseno=tenant.tema_diseno,
+        dominio_personalizado=tenant.dominio_personalizado,
+        estado_dns=tenant.estado_dns,
         logo_url=tenant.logo_url,
         banner_url=tenant.banner_url,
         whatsapp_contacto=tenant.whatsapp_contacto,

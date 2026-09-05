@@ -114,6 +114,9 @@ class TenantCMSUpdate(BaseModel):
     sitio_web_activo: Optional[bool] = True
     slogan: Optional[str] = None
     color_primario: Optional[str] = "#0284c7"
+    tema_diseno: Optional[str] = "dark_luxury"
+    dominio_personalizado: Optional[str] = None
+    estado_dns: Optional[str] = "PENDIENTE"
     logo_url: Optional[str] = None
     banner_url: Optional[str] = None
     whatsapp_contacto: Optional[str] = None
@@ -125,6 +128,9 @@ class TenantPublicConfig(BaseModel):
     sitio_web_activo: bool
     slogan: Optional[str] = None
     color_primario: str
+    tema_diseno: Optional[str] = "dark_luxury"
+    dominio_personalizado: Optional[str] = None
+    estado_dns: Optional[str] = "PENDIENTE"
     logo_url: Optional[str] = None
     banner_url: Optional[str] = None
     whatsapp_contacto: str

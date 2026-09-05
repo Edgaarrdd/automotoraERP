@@ -4,19 +4,19 @@ import { apiFetch } from '../services/api';
 
 export default function NewVehicleModal({ onClose, onSubmit }) {
   const [formData, setFormData] = useState({
-    patente: 'KJPW99',
+    patente: '',
     vin: '',
-    marca: 'Nissan',
-    modelo: 'Kicks',
-    version: '1.6 Exclusive CVT',
-    año: 2022,
-    kilometraje: 28000,
+    marca: '',
+    modelo: '',
+    version: '',
+    año: new Date().getFullYear(),
+    kilometraje: 0,
     tipo_combustible: 'BENCINA',
     transmision: 'AUTOMATICA',
-    color: 'Plata Metálico',
-    motor: '1.6L 4-Cil HR16DE',
-    precio_compra_tasacion: 11000000,
-    precio_venta_publico: 13490000,
+    color: '',
+    motor: '',
+    precio_compra_tasacion: '',
+    precio_venta_publico: '',
     estado: 'DISPONIBLE'
   });
 

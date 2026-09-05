@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Globe, Palette, Phone, MapPin, Save, Eye, CheckCircle2, AlertCircle, Sparkles, Image, RefreshCw } from 'lucide-react';
+import { Globe, Palette, Phone, MapPin, Save, Eye, CheckCircle2, AlertCircle, Sparkles, Image, RefreshCw, Layout, Server, ShieldCheck, Link2 } from 'lucide-react';
 import { apiFetch } from '../services/api';
+
+const THEMES = [
+  { id: 'dark_luxury', name: 'Dark Luxury', color: '#0284c7', bg: 'bg-slate-950', text: 'text-white', border: 'border-sky-500/30', desc: 'Oscuro elegante y moderno' },
+  { id: 'clean_light', name: 'Clean Light', color: '#2563eb', bg: 'bg-slate-100', text: 'text-slate-900', border: 'border-blue-500/30', desc: 'Claro minimalista corporativo' },
+  { id: 'sport_red', name: 'Sport Red', color: '#dc2626', bg: 'bg-zinc-950', text: 'text-white', border: 'border-red-500/30', desc: 'Deportivo de alto impacto' },
+  { id: 'ocean_blue', name: 'Ocean Blue', color: '#0d9488', bg: 'bg-cyan-950', text: 'text-cyan-50', border: 'border-teal-500/30', desc: 'Azul teal premium' },
+  { id: 'electric_green', name: 'Electric Green', color: '#16a34a', bg: 'bg-neutral-950', text: 'text-emerald-50', border: 'border-emerald-500/30', desc: 'Verde ecológico e innovador' },
+];
 
 export default function CMSSection({ onOpenStorefrontPreview }) {
   const [loading, setLoading] = useState(true);
@@ -12,6 +20,9 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
     sitio_web_activo: true,
     slogan: 'Tu automotora de confianza en Chile',
     color_primario: '#0284c7',
+    tema_diseno: 'dark_luxury',
+    dominio_personalizado: '',
+    estado_dns: 'PENDIENTE',
     logo_url: '',
     banner_url: '',
     whatsapp_contacto: '+56912345678',
@@ -30,6 +41,9 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
         sitio_web_activo: data.sitio_web_activo ?? true,
         slogan: data.slogan || 'Tu automotora de confianza en Chile',
         color_primario: data.color_primario || '#0284c7',
+        tema_diseno: data.tema_diseno || 'dark_luxury',
+        dominio_personalizado: data.dominio_personalizado || '',
+        estado_dns: data.estado_dns || 'PENDIENTE',
         logo_url: data.logo_url || '',
         banner_url: data.banner_url || '',
         whatsapp_contacto: data.whatsapp_contacto || '+56912345678',
@@ -40,6 +54,14 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSelectTheme = (themeId, defaultColor) => {
+    setCmsConfig((prev) => ({
+      ...prev,
+      tema_diseno: themeId,
+      color_primario: defaultColor
+    }));
   };
 
   const handleSave = async (e) => {
@@ -53,7 +75,7 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
         body: JSON.stringify(cmsConfig)
       });
       setCmsConfig(updated);
-      setSuccessMessage('¡Configuración CMS guardada exitosamente y publicada en tiempo real!');
+      setSuccessMessage('¡Configuración CMS y publicación web guardadas exitosamente!');
       setTimeout(() => setSuccessMessage(''), 4000);
     } catch (err) {
       setErrorMessage(err.message || 'Error al guardar la configuración');
@@ -82,13 +104,13 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
             </div>
             <div>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                Mi Sitio Web (CMS Storefront)
+                Mi Sitio Web (CMS Storefront & Dominio)
                 <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono">
-                  Beta 0.1.0 Multi-Tenant
+                  Multi-Tenant
                 </span>
               </h2>
               <p className="text-sm text-slate-400 mt-0.5">
-                Personaliza la identidad visual, colores y datos de contacto del portal público de tu automotora.
+                Personaliza temas visuales, colores de marca, dominio propio y publica el portal comercial hacia internet.
               </p>
             </div>
           </div>
@@ -123,11 +145,12 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
         {/* Form Column */}
         <div className="lg:col-span-2 space-y-6">
           <form onSubmit={handleSave} className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-xl">
+            
             {/* Status Switch */}
             <div className="flex items-center justify-between p-4 bg-slate-800/50 border border-slate-700/60 rounded-xl">
               <div>
-                <h4 className="font-semibold text-white text-sm">Estado del Sitio Web Público</h4>
-                <p className="text-xs text-slate-400">Si está desactivado, el portal público mostrará una página en mantenimiento.</p>
+                <h4 className="font-semibold text-white text-sm">Publicación del Sitio Web a Internet</h4>
+                <p className="text-xs text-slate-400">Si está activo, tus clientes podrán ver el catálogo y cotizar en línea.</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -138,6 +161,86 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
                 />
                 <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
               </label>
+            </div>
+
+            {/* Visual Themes Selector */}
+            <div className="space-y-3">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <Layout className="w-4 h-4 text-sky-400" />
+                Selección de Tema Visual del Sitio Web
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {THEMES.map((th) => {
+                  const isSelected = cmsConfig.tema_diseno === th.id;
+                  return (
+                    <button
+                      type="button"
+                      key={th.id}
+                      onClick={() => handleSelectTheme(th.id, th.color)}
+                      className={`p-3.5 rounded-2xl border transition-all text-left flex flex-col justify-between ${
+                        isSelected
+                          ? 'border-sky-500 bg-sky-500/10 ring-2 ring-sky-500/30'
+                          : 'border-slate-800 bg-slate-950/60 hover:border-slate-700'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="w-4 h-4 rounded-full border border-white/20" style={{ backgroundColor: th.color }}></span>
+                        {isSelected && <CheckCircle2 className="w-4 h-4 text-sky-400" />}
+                      </div>
+                      <div>
+                        <h5 className="font-bold text-xs text-white">{th.name}</h5>
+                        <p className="text-[10px] text-slate-400 mt-0.5">{th.desc}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Custom Domain Section */}
+            <div className="p-4 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-4">
+              <h4 className="font-bold text-white text-xs uppercase tracking-wider flex items-center gap-2">
+                <Server className="w-4 h-4 text-emerald-400" />
+                Configuración de Dominio y DNS
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                    Subdominio Asignado (Gratuito)
+                  </label>
+                  <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 font-mono">
+                    <Link2 className="w-3.5 h-3.5 mr-2 text-sky-400" />
+                    tenant_origen.automotoraerp.cl
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                    Dominio Propio Personalizado (Ej: mi-automotora.cl)
+                  </label>
+                  <input
+                    type="text"
+                    value={cmsConfig.dominio_personalizado}
+                    onChange={(e) => setCmsConfig({ ...cmsConfig, dominio_personalizado: e.target.value })}
+                    placeholder="www.miautomotora.cl"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:border-sky-500 font-mono outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-900/60 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-sky-400" />
+                  <span className="text-slate-300">Registro CNAME DNS:</span>
+                  <code className="bg-slate-950 px-2 py-0.5 rounded text-sky-300 font-mono">cname.automotoraerp.cl</code>
+                </div>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                  cmsConfig.dominio_personalizado ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                }`}>
+                  {cmsConfig.dominio_personalizado ? 'DNS Conectado / HTTPS Activo' : 'Subdominio Estándar'}
+                </span>
+              </div>
             </div>
 
             {/* Inputs Grid */}
@@ -244,7 +347,7 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
                 className="flex items-center gap-2 px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-sky-500/25 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
-                {saving ? 'Guardando...' : 'Guardar Cambios CMS'}
+                {saving ? 'Guardando...' : 'Guardar Cambios y Publicar'}
               </button>
             </div>
           </form>
@@ -282,6 +385,11 @@ export default function CMSSection({ onOpenStorefrontPreview }) {
               <span className="text-xs text-sky-400 uppercase tracking-widest font-semibold">Catálogo Online</span>
               <h5 className="text-lg font-bold text-white">Encuentra tu próximo auto hoy</h5>
               <p className="text-xs text-slate-400">{cmsConfig.direccion_fisica}</p>
+              {cmsConfig.dominio_personalizado && (
+                <p className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 py-1 rounded-lg border border-emerald-500/20">
+                  🌐 Dominio: https://{cmsConfig.dominio_personalizado}
+                </p>
+              )}
 
               <div className="pt-3">
                 <button
